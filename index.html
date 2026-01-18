@@ -12,62 +12,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap');
         
+        /* CORE SETTINGS */
         * { cursor: none !important; }
-        @media (pointer: coarse) { #cursor, #cursor-border { display: none !important; } * { cursor: auto !important; } }
-        #cursor { position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; transition: transform 0.1s ease-out; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; }
-        #cursor svg { width: 35px; fill: white; animation: crowFlap 0.8s infinite alternate; }
-        @keyframes crowFlap { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
-        #cursor-border { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
-        .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
-
         body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; }
         .header-font { font-family: 'Syncopate', sans-serif; }
-        
-        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
-        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; }
+
+        /* CUSTOM CURSOR */
+        @media (pointer: coarse) { #cursor, #cursor-border { display: none !important; } * { cursor: auto !important; } }
+        #cursor { position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; transition: transform 0.1s; }
+        #cursor svg { width: 35px; fill: white; animation: crowFlap 0.8s infinite alternate; }
+        #cursor-border { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
+        .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
+        @keyframes crowFlap { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
+
+        /* PRELOADER & AUTH UI */
+        #preloader { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; margin-top: 20px; }
         .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px #fff; }
-        
         .auth-input { background: transparent; border: 1px solid #333; padding: 12px; width: 100%; color: white; font-size: 10px; outline: none; transition: 0.3s; margin-bottom: 10px; text-transform: uppercase; }
-        .auth-input:focus { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .auth-link { color: #888; font-size: 9px; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
+        .auth-input:focus { border-color: white; }
+        .auth-link { color: #666; font-size: 9px; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
         .auth-link:hover { color: #fff; }
 
-        .card-glow { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #18181b; position: relative; }
-        .card-glow:hover { transform: translateY(-10px) scale(1.02); border-color: #fff; box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.05); }
-        .card-glow img { transition: transform 0.7s ease; }
-        .card-glow:hover img { transform: scale(1.15); filter: brightness(1.1); }
-
-        .lore-container { max-width: 700px; margin: 0 auto; line-height: 2.2; text-align: justify; padding: 20px; }
-        .lore-container p { margin-bottom: 30px; opacity: 0.7; font-size: 13px; letter-spacing: 0.5px; }
-
-        .owner-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: #0a0a0a; border: 1px solid #fff; padding: 25px; z-index: 200000; width: 90%; max-width: 400px; display: none; }
-        .owner-modal.active { display: block; transform: translate(-50%, -50%) scale(1); }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 199999; display: none; }
-        .modal-overlay.active { display: block; }
-
-        /* SIDEBAR */
+        /* SIDEBAR & NAV */
         #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
-        .menu-link { display: block; position: relative; z-index: 100005 !important; font-size: 1.25rem; margin-bottom: 1.5rem; transition: 0.3s; opacity: 0.5; pointer-events: auto !important; }
-        .menu-link.active { opacity: 1; text-decoration: underline; text-underline-offset: 8px; }
-        .menu-link:hover { opacity: 1; padding-left: 10px; }
-
-        .saran-input { background: transparent; border: 1px solid #333; padding: 10px; width: 100%; color: white; font-size: 10px; outline: none; }
-        .file-input-wrapper { border: 1px dashed #333; padding: 15px; text-align: center; cursor: pointer; font-size: 8px; color: #555; }
-        .file-input-wrapper:hover { border-color: white; color: white; }
-        .delete-badge { position: absolute; top: 10px; right: 10px; background: #ff0000; color: #fff; font-size: 8px; padding: 5px 10px; border-radius: 2px; cursor: pointer; z-index: 50; letter-spacing: 2px; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
-
-        /* TOP NAV */
+        .menu-link { display: block; font-size: 1.1rem; margin-bottom: 1.2rem; transition: 0.3s; opacity: 0.5; position: relative; z-index: 100005; }
+        .menu-link.active, .menu-link:hover { opacity: 1; padding-left: 10px; text-decoration: underline; text-underline-offset: 5px; }
         .top-nav { position: fixed; top: 40px; right: 40px; display: flex; align-items: center; gap: 15px; z-index: 99999; }
-        .nav-box { background: rgba(0,0,0,0.4); backdrop-blur: md; border: 1px solid rgba(255,255,255,0.1); padding: 12px; display: flex; align-items: center; transition: 0.3s; pointer-events: auto !important; }
+        .nav-box { background: rgba(0,0,0,0.4); backdrop-blur: md; border: 1px solid rgba(255,255,255,0.1); padding: 12px; display: flex; align-items: center; transition: 0.3s; }
         .nav-box:hover { border-color: #fff; }
-        .search-input { width: 0; opacity: 0; background: transparent; padding: 0; color: #fff; font-size: 10px; transition: all 0.5s; outline: none; }
-        .nav-box:hover .search-input, .search-input:focus { width: 150px; opacity: 1; margin-right: 10px; }
 
-        /* SETTINGS LINK STYLE */
-        .setting-item { font-size: 10px; text-transform: uppercase; color: #666; cursor: pointer; transition: 0.3s; padding: 5px 0; display: block; }
-        .setting-item:hover { color: #fff; padding-left: 5px; }
-        .setting-danger { color: #800; }
-        .setting-danger:hover { color: #f00; padding-left: 5px; }
+        /* MODALS & FORMS */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 199999; display: none; }
+        .modal-overlay.active { display: block; }
+        .owner-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: #0a0a0a; border: 1px solid #fff; padding: 30px; z-index: 200000; width: 90%; max-width: 400px; display: none; }
+        .owner-modal.active { display: block; transform: translate(-50%, -50%) scale(1); }
+        .file-wrapper { border: 1px dashed #333; padding: 20px; text-align: center; cursor: pointer; font-size: 9px; color: #555; text-transform: uppercase; margin-bottom: 15px; }
+        .file-wrapper:hover { border-color: #fff; color: #fff; }
+
+        /* CONTENT ELEMENTS */
+        .lore-container { width: 90%; max-width: 700px; margin: 0 auto; line-height: 2.2; text-align: justify; padding: 20px 0; }
+        .lore-container p { margin-bottom: 30px; opacity: 0.7; font-size: 12px; letter-spacing: 0.5px; }
+        .card-glow { transition: all 0.5s; border: 1px solid #18181b; position: relative; }
+        .card-glow:hover { transform: translateY(-10px); border-color: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        .delete-badge { position: absolute; top: 0; right: 0; background: #800; color: #fff; font-size: 8px; padding: 4px 8px; cursor: pointer; z-index: 50; }
+        
+        /* PROFILE UI */
+        .profile-pic { width: 40px; height: 40px; border: 1px solid #333; border-radius: 50%; object-fit: cover; }
+        .rank-badge { font-size: 8px; background: #111; border: 1px solid #333; padding: 2px 6px; color: #888; margin-top: 4px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -76,105 +68,132 @@
 
     <div id="preloader">
         <div id="welcome-screen" class="flex flex-col items-center">
-            <div class="header-font text-[12px] tracking-[1.5em] mb-8 text-white">CROWSAINT</div>
+            <div class="header-font text-[14px] tracking-[1.5em] mb-4 text-white">CROWSAINT</div>
+            <div class="text-[8px] tracking-[0.5em] text-zinc-500 mb-8">THE HOLY FALLEN ARCHIVE</div>
             <button onclick="showLogin()" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
         </div>
-        <div id="login-screen" class="hidden w-80 text-center">
-            <h3 class="header-font text-[12px] tracking-[0.5em] mb-6 text-white">IDENTIFY YOURSELF</h3>
+        
+        <div id="login-screen" class="hidden w-72 text-center">
+            <h3 class="header-font text-[10px] tracking-[0.5em] mb-8 text-white">IDENTIFY YOURSELF</h3>
             <input type="text" id="login-user" placeholder="USERNAME" class="auth-input">
             <input type="password" id="login-pass" placeholder="PASSWORD" class="auth-input">
-            <button onclick="handleLogin()" class="enter-btn w-full mt-4 header-font btn-hover">ACCESS</button>
-            <span onclick="showRegister()" class="auth-link">NO ID? CREATE ACCOUNT</span>
+            <button onclick="handleLogin()" class="enter-btn w-full header-font btn-hover">ACCESS</button>
+            <span onclick="showRegister()" class="auth-link">NO IDENTITY? CREATE ACCOUNT</span>
         </div>
-        <div id="register-screen" class="hidden w-80 text-center">
-            <h3 class="header-font text-[12px] tracking-[0.5em] mb-6 text-white">NEW IDENTITY</h3>
-            <input type="text" id="reg-user" placeholder="CREATE USERNAME" class="auth-input">
-            <input type="password" id="reg-pass" placeholder="CREATE PASSWORD" class="auth-input">
+        
+        <div id="register-screen" class="hidden w-72 text-center">
+            <h3 class="header-font text-[10px] tracking-[0.5em] mb-8 text-white">NEW IDENTITY</h3>
+            <input type="text" id="reg-user" placeholder="USERNAME" class="auth-input">
+            <input type="password" id="reg-pass" placeholder="PASSWORD" class="auth-input">
             <input type="password" id="reg-pass-conf" placeholder="CONFIRM PASSWORD" class="auth-input">
-            <button onclick="handleRegister()" class="enter-btn w-full mt-4 header-font btn-hover">REGISTER</button>
-            <span onclick="showLogin()" class="auth-link">HAVE ID? LOGIN HERE</span>
+            <button onclick="handleRegister()" class="enter-btn w-full header-font btn-hover">REGISTER</button>
+            <span onclick="showLogin()" class="auth-link">RETURN TO LOGIN</span>
         </div>
+        
         <div id="loading-status" class="hidden flex flex-col items-center mt-10">
             <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4">AUTHENTICATED. DECRYPTING...</div>
-            <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative">
-                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300"></div>
-            </div>
+            <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative"><div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300"></div></div>
             <div id="progress-percent" class="mt-4 text-[7px] text-zinc-500 font-mono">0%</div>
         </div>
     </div>
 
-    <div id="modal-overlay" class="modal-overlay" onclick="toggleOwnerModal()"></div>
+    <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
     <div id="owner-modal" class="owner-modal">
         <h3 class="header-font text-[10px] mb-6 tracking-widest text-center">OWNER TERMINAL</h3>
-        <div class="space-y-4">
-            <div class="file-input-wrapper uppercase" onclick="document.getElementById('file-upload').click()">
-                <span id="file-name-display">SELECT PRODUCT IMAGE</span>
-                <input type="file" id="file-upload" class="hidden" accept="image/*" onchange="handleFileSelect(this)">
-            </div>
-            <input type="text" id="new-name" placeholder="PRODUCT NAME" class="saran-input uppercase">
-            <input type="text" id="new-link" placeholder="ROBLOX LINK" class="saran-input uppercase">
-            <button onclick="saveNewProduct()" class="w-full py-2 bg-white text-black text-[10px] header-font btn-hover">PUSH TO ARCHIVE</button>
+        <div class="file-wrapper" onclick="document.getElementById('file-upload').click()">
+            <span id="file-name-display">SELECT IMAGE</span>
+            <input type="file" id="file-upload" class="hidden" accept="image/*" onchange="handleFileSelect(this)">
         </div>
+        <input type="text" id="new-name" placeholder="PRODUCT NAME" class="auth-input">
+        <input type="text" id="new-link" placeholder="ROBLOX LINK" class="auth-input">
+        <button onclick="saveNewProduct()" class="enter-btn w-full mt-0 header-font btn-hover">PUSH</button>
     </div>
 
-    <div id="cursor"><svg viewBox="0 0 24 24"><path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/></svg></div>
-    <div id="cursor-border"></div>
+    <div id="admin-modal" class="owner-modal">
+        <h3 class="header-font text-[10px] mb-6 tracking-widest text-center text-red-500">ADMIN RECRUITMENT</h3>
+        <input type="text" id="adm-nama" placeholder="REAL NAME" class="auth-input">
+        <input type="text" id="adm-roblox" placeholder="ROBLOX USERNAME" class="auth-input">
+        <textarea id="adm-alasan" rows="2" placeholder="WHY YOU?" class="auth-input"></textarea>
+        <textarea id="adm-misi" rows="2" placeholder="YOUR MISSION?" class="auth-input"></textarea>
+        <button onclick="kirimAdminForm()" id="btn-adm" class="enter-btn w-full mt-0 header-font btn-hover">SEND APPLICATION</button>
+    </div>
 
-    <div class="top-nav">
+    <div id="profile-modal" class="owner-modal">
+        <h3 class="header-font text-[10px] mb-6 tracking-widest text-center">EDIT IDENTITY</h3>
+        <input type="text" id="edit-pic" placeholder="PHOTO URL (IMGUR/DISCORD LINK)" class="auth-input">
+        <div class="text-[8px] text-zinc-500 mb-2 mt-4 uppercase">Select Rank:</div>
+        <select id="edit-rank" class="auth-input bg-black">
+            <option value="SAINT INITIATE">SAINT INITIATE</option>
+            <option value="VOID WALKER">VOID WALKER</option>
+            <option value="SHADOW GUARD">SHADOW GUARD</option>
+        </select>
+        <button onclick="saveProfile()" class="enter-btn w-full mt-4 header-font btn-hover">UPDATE</button>
+    </div>
+
+    <div class="top-nav hidden" id="main-nav">
         <div class="nav-box btn-hover" id="search-ui" style="display:none">
-            <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="bg-transparent outline-none text-[10px] w-32 uppercase text-white">
         </div>
         <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="nav-box btn-hover bg-white/5 border-white/20 uppercase">
-            <span class="text-[9px] header-font mr-3 hidden md:block">Join Community</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 18.5h-13v-13h13v13zM19.3 4.1L4.1 6.5v13.4l15.2-2.4V4.1zM11.5 11.1h1v1h-1v-1z"/></svg>
+            <span class="text-[9px] header-font">JOIN GROUP</span>
         </a>
     </div>
 
-    <button id="sidebar-toggle" onclick="toggleSidebar()" class="fixed top-10 left-10 z-[100002] bg-black/50 p-3 border border-white/10 uppercase text-[10px] header-font btn-hover">Menu</button>
+    <button id="sidebar-toggle" onclick="toggleSidebar()" class="hidden fixed top-10 left-10 z-[100002] bg-black/50 p-3 border border-white/10 uppercase text-[10px] header-font btn-hover">MENU</button>
 
     <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-zinc-950 border-r border-zinc-900 p-10 flex flex-col transform -translate-x-full overflow-y-auto">
-        <button onclick="toggleSidebar()" class="self-end text-zinc-500 hover:text-white uppercase text-[10px] btn-hover mb-8">Close</button>
+        <button onclick="toggleSidebar()" class="self-end text-zinc-500 hover:text-white uppercase text-[10px] btn-hover mb-8">CLOSE</button>
         
-        <nav class="space-y-2 mb-8">
-            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-6">MAIN_ARCHIVE</h4>
-            <button onclick="switchTab('home')" id="home-tab" class="menu-link header-font btn-hover active uppercase">Home</button>
-            <button onclick="switchTab('shop')" id="shop-tab" class="menu-link header-font btn-hover uppercase">Shop</button>
+        <nav class="space-y-1 mb-8">
+            <h4 class="text-[9px] text-zinc-600 tracking-widest mb-6 mt-4">ARCHIVE</h4>
+            <button onclick="switchTab('home')" id="home-tab" class="menu-link header-font btn-hover active uppercase">HOME</button>
+            <button onclick="switchTab('shop')" id="shop-tab" class="menu-link header-font btn-hover uppercase">SHOP</button>
             
-            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mt-12 mb-6">COMMUNITY</h4>
-            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="menu-link header-font btn-hover uppercase">Discord</a>
-            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="menu-link header-font btn-hover uppercase">Tiktok</a>
-            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="menu-link header-font btn-hover uppercase">Roblox Profile</a>
-            <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="menu-link header-font btn-hover uppercase text-white/80">Roblox Group</a>
-
-            <button onclick="checkOwner()" class="block text-[10px] header-font text-zinc-800 hover:text-zinc-500 mt-16 text-left uppercase italic btn-hover">[ OWNER ACCESS ]</button>
+            <h4 class="text-[9px] text-zinc-600 tracking-widest mt-10 mb-6">COMMUNITY</h4>
+            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="menu-link header-font btn-hover uppercase">DISCORD</a>
+            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="menu-link header-font btn-hover uppercase">TIKTOK</a>
+            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="menu-link header-font btn-hover uppercase">ROBLOX PROFILE</a>
+            <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="menu-link header-font btn-hover uppercase text-white/80">ROBLOX GROUP</a>
+            <button onclick="openAdminModal()" class="menu-link header-font btn-hover uppercase text-red-500 mt-6 text-[10px]">APPLY ADMIN</button>
+            <button onclick="checkOwner()" class="block text-[9px] text-zinc-800 hover:text-zinc-500 mt-10 uppercase italic btn-hover">[ OWNER ACCESS ]</button>
         </nav>
 
         <div class="mt-auto">
-            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">FEEDBACK</h4>
-            <div class="space-y-4 mb-8">
-                <input type="text" id="nama-saran" placeholder="NAME..." class="saran-input uppercase">
-                <textarea id="pesan-saran" rows="3" placeholder="MESSAGE..." class="saran-input uppercase"></textarea>
-                <button onclick="kirimSaran()" id="btn-saran" class="w-full py-2 border border-white/20 text-[10px] header-font hover:bg-white hover:text-black btn-hover">SEND MESSAGE</button>
+            <div class="border-t border-zinc-900 pt-6 pb-6">
+                <h4 class="text-[9px] text-zinc-600 tracking-widest mb-4 uppercase">IDENTITY</h4>
+                <div class="flex items-center gap-3">
+                    <img id="sidebar-pic" src="https://via.placeholder.com/150" class="profile-pic">
+                    <div>
+                        <div id="current-user-display" class="text-[10px] font-bold uppercase text-white">GUEST</div>
+                        <div id="current-rank-display" class="rank-badge">UNVERIFIED</div>
+                    </div>
+                </div>
+                <button onclick="openProfileModal()" class="text-[8px] text-zinc-500 hover:text-white underline mt-3 uppercase btn-hover">EDIT PROFILE</button>
             </div>
 
-            <div class="border-t border-zinc-900 pt-6 pb-4">
-                <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">SETTINGS</h4>
-                <div class="space-y-1">
-                    <div class="text-[8px] text-zinc-500 uppercase mb-2">Logged in as: <span id="current-user-display" class="text-white font-bold">GUEST</span></div>
-                    <button onclick="toggleAudio()" id="audio-btn" class="setting-item btn-hover">MUTE AUDIO</button>
-                    <button onclick="handleLogout()" class="setting-item setting-danger btn-hover">LOGOUT</button>
+            <div class="border-t border-zinc-900 pt-6">
+                <h4 class="text-[9px] text-zinc-600 tracking-widest mb-4 uppercase">FEEDBACK</h4>
+                <div class="space-y-3">
+                    <input type="text" id="nama-saran" placeholder="NAME..." class="auth-input" style="font-size: 9px; padding: 8px;">
+                    <textarea id="pesan-saran" rows="2" placeholder="MESSAGE..." class="auth-input" style="font-size: 9px; padding: 8px;"></textarea>
+                    <button onclick="kirimSaran()" id="btn-saran" class="w-full py-2 border border-white/20 text-[9px] header-font hover:bg-white hover:text-black btn-hover">SEND</button>
+                </div>
+                
+                <div class="flex gap-2 mt-6">
+                    <button onclick="toggleAudio()" id="audio-btn" class="text-[9px] text-zinc-400 hover:text-white uppercase flex-1 border border-zinc-800 py-1 btn-hover">MUTE</button>
+                    <button onclick="handleLogout()" class="text-[9px] text-red-800 hover:text-red-500 uppercase flex-1 border border-red-900/30 py-1 btn-hover">LOGOUT</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <header class="text-center pt-60 mb-10 px-6 reveal">
-        <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4">CROWSAINT</h1>
+    <header class="text-center pt-40 md:pt-60 mb-10 px-6 reveal">
+        <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4 text-white">CROWSAINT</h1>
         <p class="text-zinc-600 text-[8px] md:text-[10px] tracking-[0.5em] uppercase italic">"Don't follow the crowd, lead the saint"</p>
     </header>
 
-    <main id="main-content" class="mb-32">
+    <main class="mb-32">
         <section id="home-section" class="reveal">
             <div class="lore-container">
                 <p>Dia tidak berasal dari tanah yang kau pijak. Di antara konstelasi yang belum terpetakan, ia adalah Sang Penjaga—seorang Kesatria Gagak Suci yang sayapnya menyentuh batas cakrawala abadi.</p>
@@ -183,94 +202,28 @@
                 <p class="text-center italic mt-16 tracking-[0.4em] text-[10px] text-white border-y border-white/10 py-8">"I AM THE SAINT OF THE VOID. WELCOME TO MY ARCHIVE."</p>
             </div>
         </section>
+
         <section id="shop-section" class="hidden px-4 md:px-20">
-            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12"></div>
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </section>
     </main>
 
     <div class="fixed bottom-5 left-5 text-[9px] text-zinc-500 font-mono tracking-widest hidden md:block">
-        <div id="digital-clock">00:00:00:00</div>
-        <div class="text-white/40 uppercase italic">Status: Stable | Owner: Ferdi</div>
+        <div id="digital-clock" class="text-white">00:00:00</div>
+        <div class="text-white/30 uppercase italic mt-1">Status: Operational</div>
     </div>
 
+    <div id="cursor"><svg viewBox="0 0 24 24"><path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/></svg></div>
+    <div id="cursor-border"></div>
     <audio id="bg-music" loop><source src="horror.mp3" type="audio/mpeg"></audio>
 
     <script>
+        // --- 1. CONFIGURATION & DATA ---
         const audio = document.getElementById('bg-music');
         let localProducts = JSON.parse(localStorage.getItem('crowsaint_items')) || [];
         let tempImgUrl = "";
-        let currentUser = "GUEST";
+        let currentUser = null;
         
-        // AUTHENTICATION LOGIC
-        function showLogin() {
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('register-screen').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-            // Play audio on interaction start
-            if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio Error")); }
-        }
-        function showRegister() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('register-screen').classList.remove('hidden');
-        }
-        function handleRegister() {
-            const user = document.getElementById('reg-user').value;
-            const pass = document.getElementById('reg-pass').value;
-            const conf = document.getElementById('reg-pass-conf').value;
-            
-            if(!user || !pass || !conf) return alert("FILL ALL FIELDS.");
-            if(pass !== conf) return alert("PASSWORDS DO NOT MATCH.");
-            
-            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-            if(users.find(u => u.username === user)) return alert("USERNAME TAKEN.");
-            
-            users.push({ username: user, password: pass });
-            localStorage.setItem('crowsaint_users', JSON.stringify(users));
-            alert("IDENTITY CREATED. PLEASE LOGIN.");
-            showLogin();
-        }
-        function handleLogin() {
-            const user = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-pass').value;
-            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-            const valid = users.find(u => u.username === user && u.password === pass);
-            
-            if(valid) { 
-                currentUser = user;
-                document.getElementById('current-user-display').innerText = user.toUpperCase();
-                startLoading(); 
-            } else { alert("ACCESS DENIED. WRONG CREDENTIALS."); }
-        }
-        function startLoading() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('loading-status').classList.remove('hidden');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 10) + 1;
-                if (progress > 100) progress = 100;
-                document.getElementById('progress-bar').style.width = progress + '%';
-                document.getElementById('progress-percent').innerText = progress + '%';
-                if(progress >= 100) { clearInterval(interval); document.getElementById('preloader').style.display = 'none'; }
-            }, 100);
-        }
-
-        // SETTINGS LOGIC
-        function handleLogout() {
-            if(confirm("ARE YOU SURE YOU WANT TO LOGOUT?")) {
-                location.reload(); // Reloads page to reset everything
-            }
-        }
-        function toggleAudio() {
-            const btn = document.getElementById('audio-btn');
-            if(audio.paused) {
-                audio.play();
-                btn.innerText = "MUTE AUDIO";
-            } else {
-                audio.pause();
-                btn.innerText = "UNMUTE AUDIO";
-            }
-        }
-
         const initialProducts = [
             { id: 1, name: "DARK ANGEL", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "1.jpg" },
             { id: 2, name: "PIXEL KNIGHT", link: "https://www.roblox.com/id/catalog/124309605398103/", img: "2.jpg" },
@@ -283,79 +236,281 @@
             { id: 9, name: "4TUNE TRACKSUIT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "9.jpg" }
         ];
 
+        // --- 2. AUTHENTICATION SYSTEM ---
+        function showLogin() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            // Play Audio
+            if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio permission needed")); }
+        }
+
+        function showRegister() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.remove('hidden');
+        }
+
+        function handleRegister() {
+            const user = document.getElementById('reg-user').value.toUpperCase().trim();
+            const pass = document.getElementById('reg-pass').value;
+            const conf = document.getElementById('reg-pass-conf').value;
+
+            if(!user || !pass || !conf) return alert("ERROR: ALL FIELDS REQUIRED.");
+            if(pass !== conf) return alert("ERROR: PASSWORD MISMATCH.");
+            
+            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+            
+            // SECURITY CHECK: Duplicate Name
+            if(users.some(u => u.username === user)) {
+                return alert("ACCESS DENIED: IDENTITY ALREADY EXISTS.");
+            }
+            
+            const newUser = { 
+                username: user, 
+                password: pass, 
+                pic: "https://via.placeholder.com/150/333333/FFFFFF?text=CS", // Default Pic
+                rank: "SAINT INITIATE" 
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('crowsaint_users', JSON.stringify(users));
+            alert("IDENTITY ESTABLISHED. PLEASE LOGIN.");
+            showLogin();
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('login-user').value.toUpperCase().trim();
+            const pass = document.getElementById('login-pass').value;
+            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+            
+            // SECURITY CHECK: Credential Match
+            const foundUser = users.find(u => u.username === user && u.password === pass);
+            
+            if(foundUser) {
+                currentUser = foundUser;
+                updateProfileUI();
+                startLoading();
+            } else {
+                alert("ACCESS DENIED: INVALID CREDENTIALS.");
+            }
+        }
+
+        function startLoading() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('loading-status').classList.remove('hidden');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 10) + 1;
+                if (progress > 100) progress = 100;
+                document.getElementById('progress-bar').style.width = progress + '%';
+                document.getElementById('progress-percent').innerText = progress + '%';
+                
+                if(progress >= 100) { 
+                    clearInterval(interval); 
+                    document.getElementById('preloader').style.display = 'none';
+                    // REVEAL UI ELEMENTS
+                    document.getElementById('main-nav').classList.remove('hidden');
+                    document.getElementById('sidebar-toggle').classList.remove('hidden');
+                    ScrollReveal().reveal('.reveal', { distance: '20px', duration: 800, interval: 100 });
+                }
+            }, 80);
+        }
+
+        function handleLogout() {
+            if(confirm("TERMINATE SESSION?")) location.reload();
+        }
+
+        // --- 3. PROFILE SYSTEM ---
+        function updateProfileUI() {
+            if(!currentUser) return;
+            document.getElementById('current-user-display').innerText = currentUser.username;
+            document.getElementById('current-rank-display').innerText = currentUser.rank;
+            document.getElementById('sidebar-pic').src = currentUser.pic;
+        }
+
+        function openProfileModal() {
+            closeAllModals();
+            document.getElementById('profile-modal').classList.add('active');
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function saveProfile() {
+            const newPic = document.getElementById('edit-pic').value.trim();
+            const newRank = document.getElementById('edit-rank').value;
+            
+            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+            let index = users.findIndex(u => u.username === currentUser.username);
+            
+            if(index !== -1) {
+                if(newPic) users[index].pic = newPic;
+                users[index].rank = newRank;
+                
+                localStorage.setItem('crowsaint_users', JSON.stringify(users));
+                currentUser = users[index];
+                updateProfileUI();
+                closeAllModals();
+                alert("IDENTITY UPDATED SUCCESSFULLY.");
+            }
+        }
+
+        // --- 4. ADMIN & WEBHOOK SYSTEM ---
+        function openAdminModal() {
+            toggleSidebar();
+            document.getElementById('admin-modal').classList.add('active');
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        async function kirimAdminForm() {
+            const nama = document.getElementById('adm-nama').value;
+            const roblox = document.getElementById('adm-roblox').value;
+            const alasan = document.getElementById('adm-alasan').value;
+            const misi = document.getElementById('adm-misi').value;
+            const btn = document.getElementById('btn-adm');
+
+            if(!nama || !roblox || !alasan || !misi) return alert("ERROR: ALL FIELDS REQUIRED.");
+
+            const webhookURL = "https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan";
+            const data = {
+                username: "CROWSAINT RECRUITER",
+                embeds: [{
+                    title: "🛡️ NEW ADMIN APPLICATION",
+                    color: 15158332,
+                    fields: [
+                        { name: "NAME", value: `\`\`\`${nama}\`\`\`` },
+                        { name: "ROBLOX", value: `\`\`\`${roblox}\`\`\`` },
+                        { name: "REASON", value: `\`\`\`${alasan}\`\`\`` },
+                        { name: "MISSION", value: `\`\`\`${misi}\`\`\`` }
+                    ],
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                btn.innerText = "SENDING..."; btn.disabled = true;
+                await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                closeAllModals();
+                alert("APPLICATION SENT. PLEASE WAIT 1-2 DAYS FOR APPROVAL.");
+                // Reset fields
+                ['adm-nama','adm-roblox','adm-alasan','adm-misi'].forEach(id => document.getElementById(id).value = "");
+            } catch(e) { 
+                alert("CONNECTION ERROR."); 
+            } finally { 
+                btn.innerText = "SEND APPLICATION"; btn.disabled = false; 
+            }
+        }
+
+        async function kirimSaran() {
+            const n = document.getElementById('nama-saran').value;
+            const p = document.getElementById('pesan-saran').value;
+            if(!n || !p) return alert("EMPTY FIELDS.");
+            
+            const btn = document.getElementById('btn-saran');
+            const webhookURL = "https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan";
+            
+            try {
+                btn.innerText = "..."; btn.disabled = true;
+                await fetch(webhookURL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username: "FEEDBACK BOT", embeds: [{ title: "📩 FEEDBACK", fields: [{ name: "SENDER", value: n }, { name: "MSG", value: p }] }] }) });
+                alert("SENT."); document.getElementById('nama-saran').value = ""; document.getElementById('pesan-saran').value = "";
+            } catch(e) { alert("ERR."); } finally { btn.innerText = "SEND"; btn.disabled = false; }
+        }
+
+        // --- 5. OWNER & DATA SYSTEM ---
+        function checkOwner() {
+            if(prompt("ACCESS KEY:") === "admin123") {
+                document.getElementById('owner-modal').classList.add('active');
+                document.getElementById('modal-overlay').classList.add('active');
+            } else {
+                alert("ACCESS DENIED.");
+            }
+        }
+
         function handleFileSelect(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    tempImgUrl = e.target.result;
-                    document.getElementById('file-name-display').innerText = input.files[0].name.toUpperCase();
+                reader.onload = (e) => { 
+                    tempImgUrl = e.target.result; 
+                    document.getElementById('file-name-display').innerText = "IMAGE LOADED"; 
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function switchTab(tab) {
-            const homeSec = document.getElementById('home-section');
-            const shopSec = document.getElementById('shop-section');
-            const searchBox = document.getElementById('search-ui');
-            const homeTab = document.getElementById('home-tab');
-            const shopTab = document.getElementById('shop-tab');
-
-            if(tab === 'home') {
-                homeSec.classList.remove('hidden'); shopSec.classList.add('hidden'); searchBox.style.display = 'none';
-                homeTab.classList.add('active'); shopTab.classList.remove('active');
-            } else {
-                homeSec.classList.add('hidden'); shopSec.classList.remove('hidden'); searchBox.style.display = 'flex';
-                homeTab.classList.remove('active'); shopTab.classList.add('active');
-                renderProducts();
-            }
-            toggleSidebar();
-        }
-
-        function checkOwner() {
-            const pw = prompt("ENTER ACCESS KEY:");
-            if(pw === "admin123") { toggleOwnerModal(); } else { alert("ACCESS DENIED."); }
-        }
-
-        function toggleOwnerModal() {
-            document.getElementById('owner-modal').classList.toggle('active');
-            document.getElementById('modal-overlay').classList.toggle('active');
-        }
-
         function saveNewProduct() {
             const name = document.getElementById('new-name').value;
             const link = document.getElementById('new-link').value;
-            if(!tempImgUrl || !name || !link) return alert("COMPLETE ALL FIELDS!");
+            if(!tempImgUrl || !name || !link) return alert("INCOMPLETE DATA.");
             
             const newItem = { id: Date.now(), name: name.toUpperCase(), link: link, img: tempImgUrl, isLocal: true };
             localProducts.push(newItem);
             localStorage.setItem('crowsaint_items', JSON.stringify(localProducts));
             renderProducts();
-            toggleOwnerModal();
+            closeAllModals();
         }
 
         function deleteProduct(id) {
-            if(!confirm("DELETE THIS PRODUCT?")) return;
+            if(!confirm("CONFIRM DELETION?")) return;
             localProducts = localProducts.filter(p => p.id !== id);
             localStorage.setItem('crowsaint_items', JSON.stringify(localProducts));
             renderProducts();
         }
 
-        function renderProducts() {
-            const allProducts = [...initialProducts, ...localProducts];
-            const q = document.getElementById('search-bar').value.toUpperCase();
-            const filtered = allProducts.filter(p => p.name.includes(q));
-            const grid = document.getElementById('product-grid');
+        // --- 6. NAVIGATION & UI LOGIC ---
+        function toggleSidebar() { 
+            const sb = document.getElementById('sidebar');
+            const btn = document.getElementById('sidebar-toggle');
             
+            sb.classList.toggle('-translate-x-full');
+            
+            // Logic: If sidebar closed (-translate-x-full exists), show button. If open, hide button.
+            if(sb.classList.contains('-translate-x-full')) {
+                btn.classList.remove('hidden');
+            } else {
+                btn.classList.add('hidden');
+            }
+        }
+
+        function switchTab(tab) {
+            const home = document.getElementById('home-section');
+            const shop = document.getElementById('shop-section');
+            const search = document.getElementById('search-ui');
+            
+            document.getElementById('home-tab').classList.remove('active');
+            document.getElementById('shop-tab').classList.remove('active');
+
+            if(tab === 'home') {
+                home.classList.remove('hidden');
+                shop.classList.add('hidden');
+                search.style.display = 'none';
+                document.getElementById('home-tab').classList.add('active');
+            } else {
+                home.classList.add('hidden');
+                shop.classList.remove('hidden');
+                search.style.display = 'flex';
+                document.getElementById('shop-tab').classList.add('active');
+                renderProducts();
+            }
+            
+            // Close sidebar automatically
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-toggle').classList.remove('hidden');
+        }
+
+        function renderProducts() {
+            const all = [...initialProducts, ...localProducts];
+            const q = document.getElementById('search-bar').value.toUpperCase();
+            const filtered = all.filter(p => p.name.includes(q));
+            
+            const grid = document.getElementById('product-grid');
             grid.innerHTML = filtered.map(p => `
-                <div class="card-glow reveal p-3 md:p-6 bg-black/40 backdrop-blur-sm">
-                    ${p.isLocal ? `<div class="delete-badge" onclick="deleteProduct(${p.id})">DELETE</div>` : ''}
-                    <div class="aspect-square bg-zinc-950 mb-4 border border-zinc-900 overflow-hidden flex items-center justify-center">
-                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain">
+                <div class="card-glow reveal p-3 md:p-5 bg-black/40 backdrop-blur-sm">
+                    ${p.isLocal ? `<div class="delete-badge" onclick="deleteProduct(${p.id})">DEL</div>` : ''}
+                    <div class="aspect-square bg-zinc-950 mb-4 flex items-center justify-center overflow-hidden border border-zinc-900 group">
+                        <img src="${p.img}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                     </div>
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <h3 class="header-font text-[7px] md:text-[10px] uppercase truncate w-full">${p.name}</h3>
-                        <a href="${p.link}" target="_blank" class="w-full md:w-auto text-center px-4 py-1 border border-zinc-800 hover:border-white text-[8px] btn-hover uppercase">Buy</a>
+                    <div class="flex flex-col gap-2">
+                        <h3 class="header-font text-[9px] uppercase truncate w-full text-zinc-300">${p.name}</h3>
+                        <a href="${p.link}" target="_blank" class="w-full text-center py-1 border border-zinc-800 hover:bg-white hover:text-black hover:border-white text-[8px] btn-hover uppercase transition-colors">PURCHASE</a>
                     </div>
                 </div>
             `).join('');
@@ -364,36 +519,19 @@
 
         function handleSearch() { renderProducts(); }
 
-        async function kirimSaran() {
-            const nama = document.getElementById('nama-saran').value;
-            const pesan = document.getElementById('pesan-saran').value;
-            const btn = document.getElementById('btn-saran');
-            if(!nama || !pesan) return alert("FILL THE FORM!");
-            const data = { username: "CROWSAINT LORE BOT", embeds: [{ title: "📩 NEW FEEDBACK", color: 16777215, fields: [{ name: "SENDER", value: `\`\`\`${nama}\`\`\`` }, { name: "MESSAGE", value: `\`\`\`${pesan}\`\`\`` }], timestamp: new Date() }] };
-            try {
-                btn.innerText = "SENDING..."; btn.disabled = true;
-                await fetch("https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                alert("MESSAGE ARCHIVED!"); document.getElementById('nama-saran').value = ""; document.getElementById('pesan-saran').value = "";
-            } catch (err) { alert("ERROR!"); }
-            finally { btn.innerText = "SEND MESSAGE"; btn.disabled = false; }
+        function closeAllModals() {
+            document.querySelectorAll('.owner-modal').forEach(m => m.classList.remove('active'));
+            document.getElementById('modal-overlay').classList.remove('active');
         }
 
-        // FIXED TOGGLE SIDEBAR LOGIC (BUTTON HIDES WHEN OPEN)
-        function toggleSidebar() { 
-            const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.getElementById('sidebar-toggle');
-            
-            sidebar.classList.toggle('-translate-x-full');
-            
-            if (sidebar.classList.contains('-translate-x-full')) {
-                // Sidebar tertutup -> Tombol muncul
-                toggleBtn.classList.remove('hidden');
-            } else {
-                // Sidebar terbuka -> Tombol sembunyi
-                toggleBtn.classList.add('hidden');
-            }
+        function toggleAudio() {
+            const btn = document.getElementById('audio-btn');
+            if(audio.paused) { audio.play(); btn.innerText = "MUTE"; } 
+            else { audio.pause(); btn.innerText = "UNMUTE"; }
         }
 
+        // --- 7. VISUAL EFFECTS ---
+        // Cursor
         const cursor = document.getElementById('cursor');
         const border = document.getElementById('cursor-border');
         document.addEventListener('mousemove', (e) => {
@@ -401,35 +539,57 @@
             border.style.left = e.clientX + 'px'; border.style.top = e.clientY + 'px';
         });
 
+        // Hover Effects
         function attachCursorEvents() {
-            document.querySelectorAll('.btn-hover, a, button, input, textarea, .file-input-wrapper, .delete-badge, .auth-link, .setting-item').forEach(el => {
+            document.querySelectorAll('a, button, input, textarea, .file-wrapper, .delete-badge, .auth-link').forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
             });
         }
 
-        function updateClock() {
-            const now = new Date();
-            const time = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0') + ":" + now.getSeconds().toString().padStart(2,'0') + ":" + Math.floor(now.getMilliseconds()/10).toString().padStart(2,'0');
-            const el = document.getElementById('digital-clock'); if(el) el.innerText = time;
-        }
-        setInterval(updateClock, 10);
-
+        // Starfield Background
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         let stars = [];
+        
         function initStars() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = Array.from({length: 80}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.2 }));
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = Array.from({length: 80}, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.5,
+                speed: Math.random() * 0.2 + 0.05
+            }));
         }
+
         function drawStars() {
-            ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle = "#fff";
-            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y > canvas.height) s.y = 0; });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.y += s.speed;
+                if(s.y > canvas.height) s.y = 0;
+            });
             requestAnimationFrame(drawStars);
         }
-        window.addEventListener('resize', initStars); initStars(); drawStars();
+
+        // Clock
+        setInterval(() => {
+            const n = new Date();
+            document.getElementById('digital-clock').innerText = 
+                n.getHours().toString().padStart(2,'0') + ":" + 
+                n.getMinutes().toString().padStart(2,'0') + ":" + 
+                n.getSeconds().toString().padStart(2,'0');
+        }, 1000);
+
+        // Init
+        window.addEventListener('resize', initStars);
+        initStars();
+        drawStars();
         renderProducts();
-        ScrollReveal().reveal('.reveal', { distance: '20px', duration: 800, interval: 100 });
     </script>
 </body>
 </html>
