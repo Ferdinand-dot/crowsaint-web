@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CROWSAINT | OFFICIAL ARCHIVE</title>
+    <title>CROWSAINT | THE HOLY FALLEN</title>
     
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap');
         
-        /* CURSOR SYSTEM */
         * { cursor: none !important; }
         @media (pointer: coarse) { #cursor, #cursor-border { display: none !important; } * { cursor: auto !important; } }
         #cursor { position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; transition: transform 0.1s ease-out; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; }
@@ -21,39 +20,54 @@
         #cursor-border { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
         .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
 
-        /* GENERAL STYLE */
         body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; }
         .header-font { font-family: 'Syncopate', sans-serif; }
         
-        /* PRELOADER */
         #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
         .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; }
         .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px #fff; }
+        
+        .auth-input { background: transparent; border: 1px solid #333; padding: 12px; width: 100%; color: white; font-size: 10px; outline: none; transition: 0.3s; margin-bottom: 10px; text-transform: uppercase; }
+        .auth-input:focus { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .auth-link { color: #888; font-size: 9px; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
+        .auth-link:hover { color: #fff; }
 
-        /* PRODUCT CARD - ZOOM & GLOW */
-        .card-glow { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #18181b; }
-        .card-glow:hover { 
-            transform: translateY(-10px) scale(1.02); 
-            border-color: #fff; 
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); 
-            background: rgba(255, 255, 255, 0.05);
-        }
+        .card-glow { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #18181b; position: relative; }
+        .card-glow:hover { transform: translateY(-10px) scale(1.02); border-color: #fff; box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.05); }
         .card-glow img { transition: transform 0.7s ease; }
         .card-glow:hover img { transform: scale(1.15); filter: brightness(1.1); }
 
-        /* NAVIGATION & SIDEBAR */
-        .nav-item { position: fixed; z-index: 90000; }
-        .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; transition: all 0.5s; font-size: 10px; color: #fff; outline: none; }
-        .search-container:hover .search-input, .search-input:focus { width: 120px; opacity: 1; margin-right: 10px; }
+        .lore-container { max-width: 700px; margin: 0 auto; line-height: 2.2; text-align: justify; padding: 20px; }
+        .lore-container p { margin-bottom: 30px; opacity: 0.7; font-size: 13px; letter-spacing: 0.5px; }
+
+        .owner-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: #0a0a0a; border: 1px solid #fff; padding: 25px; z-index: 200000; width: 90%; max-width: 400px; display: none; }
+        .owner-modal.active { display: block; transform: translate(-50%, -50%) scale(1); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 199999; display: none; }
+        .modal-overlay.active { display: block; }
+
+        /* SIDEBAR */
         #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
+        .menu-link { display: block; position: relative; z-index: 100005 !important; font-size: 1.25rem; margin-bottom: 1.5rem; transition: 0.3s; opacity: 0.5; pointer-events: auto !important; }
+        .menu-link.active { opacity: 1; text-decoration: underline; text-underline-offset: 8px; }
+        .menu-link:hover { opacity: 1; padding-left: 10px; }
 
-        /* FEEDBACK FORM STYLE */
-        .saran-input { background: transparent; border: 1px solid #333; padding: 10px; width: 100%; color: white; font-size: 10px; outline: none; transition: 0.3s; }
-        .saran-input:focus { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .saran-input { background: transparent; border: 1px solid #333; padding: 10px; width: 100%; color: white; font-size: 10px; outline: none; }
+        .file-input-wrapper { border: 1px dashed #333; padding: 15px; text-align: center; cursor: pointer; font-size: 8px; color: #555; }
+        .file-input-wrapper:hover { border-color: white; color: white; }
+        .delete-badge { position: absolute; top: 10px; right: 10px; background: #ff0000; color: #fff; font-size: 8px; padding: 5px 10px; border-radius: 2px; cursor: pointer; z-index: 50; letter-spacing: 2px; box-shadow: 0 0 10px rgba(255,0,0,0.5); }
 
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #fff; box-shadow: 0 0 10px #fff; }
+        /* TOP NAV */
+        .top-nav { position: fixed; top: 40px; right: 40px; display: flex; align-items: center; gap: 15px; z-index: 99999; }
+        .nav-box { background: rgba(0,0,0,0.4); backdrop-blur: md; border: 1px solid rgba(255,255,255,0.1); padding: 12px; display: flex; align-items: center; transition: 0.3s; pointer-events: auto !important; }
+        .nav-box:hover { border-color: #fff; }
+        .search-input { width: 0; opacity: 0; background: transparent; padding: 0; color: #fff; font-size: 10px; transition: all 0.5s; outline: none; }
+        .nav-box:hover .search-input, .search-input:focus { width: 150px; opacity: 1; margin-right: 10px; }
+
+        /* SETTINGS LINK STYLE */
+        .setting-item { font-size: 10px; text-transform: uppercase; color: #666; cursor: pointer; transition: 0.3s; padding: 5px 0; display: block; }
+        .setting-item:hover { color: #fff; padding-left: 5px; }
+        .setting-danger { color: #800; }
+        .setting-danger:hover { color: #f00; padding-left: 5px; }
     </style>
 </head>
 <body>
@@ -61,88 +75,174 @@
     <canvas id="starfield" class="fixed inset-0 z-[-1]"></canvas>
 
     <div id="preloader">
-        <div id="pre-content" class="flex flex-col items-center">
+        <div id="welcome-screen" class="flex flex-col items-center">
             <div class="header-font text-[12px] tracking-[1.5em] mb-8 text-white">CROWSAINT</div>
-            <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
+            <button onclick="showLogin()" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
+        </div>
+        <div id="login-screen" class="hidden w-80 text-center">
+            <h3 class="header-font text-[12px] tracking-[0.5em] mb-6 text-white">IDENTIFY YOURSELF</h3>
+            <input type="text" id="login-user" placeholder="USERNAME" class="auth-input">
+            <input type="password" id="login-pass" placeholder="PASSWORD" class="auth-input">
+            <button onclick="handleLogin()" class="enter-btn w-full mt-4 header-font btn-hover">ACCESS</button>
+            <span onclick="showRegister()" class="auth-link">NO ID? CREATE ACCOUNT</span>
+        </div>
+        <div id="register-screen" class="hidden w-80 text-center">
+            <h3 class="header-font text-[12px] tracking-[0.5em] mb-6 text-white">NEW IDENTITY</h3>
+            <input type="text" id="reg-user" placeholder="CREATE USERNAME" class="auth-input">
+            <input type="password" id="reg-pass" placeholder="CREATE PASSWORD" class="auth-input">
+            <input type="password" id="reg-pass-conf" placeholder="CONFIRM PASSWORD" class="auth-input">
+            <button onclick="handleRegister()" class="enter-btn w-full mt-4 header-font btn-hover">REGISTER</button>
+            <span onclick="showLogin()" class="auth-link">HAVE ID? LOGIN HERE</span>
         </div>
         <div id="loading-status" class="hidden flex flex-col items-center mt-10">
-            <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4">DECRYPTING ARCHIVE...</div>
+            <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4">AUTHENTICATED. DECRYPTING...</div>
             <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative">
-                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300 shadow-[0_0_15px_#fff]"></div>
+                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300"></div>
             </div>
             <div id="progress-percent" class="mt-4 text-[7px] text-zinc-500 font-mono">0%</div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="toggleOwnerModal()"></div>
+    <div id="owner-modal" class="owner-modal">
+        <h3 class="header-font text-[10px] mb-6 tracking-widest text-center">OWNER TERMINAL</h3>
+        <div class="space-y-4">
+            <div class="file-input-wrapper uppercase" onclick="document.getElementById('file-upload').click()">
+                <span id="file-name-display">SELECT PRODUCT IMAGE</span>
+                <input type="file" id="file-upload" class="hidden" accept="image/*" onchange="handleFileSelect(this)">
+            </div>
+            <input type="text" id="new-name" placeholder="PRODUCT NAME" class="saran-input uppercase">
+            <input type="text" id="new-link" placeholder="ROBLOX LINK" class="saran-input uppercase">
+            <button onclick="saveNewProduct()" class="w-full py-2 bg-white text-black text-[10px] header-font btn-hover">PUSH TO ARCHIVE</button>
         </div>
     </div>
 
     <div id="cursor"><svg viewBox="0 0 24 24"><path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/></svg></div>
     <div id="cursor-border"></div>
 
-    <button onclick="toggleSidebar()" class="nav-item top-10 left-10 group bg-black/40 p-3 border border-white/10 btn-hover">
-        <div class="w-6 h-0.5 bg-white mb-1.5 transition-all group-hover:w-10"></div>
-        <div class="w-10 h-0.5 bg-white mb-1.5"></div>
-        <div class="w-4 h-0.5 bg-white transition-all group-hover:w-10"></div>
-    </button>
-
-    <div class="nav-item search-container top-10 right-10 btn-hover bg-black/40 p-3 border border-white/10 flex items-center">
-        <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <div class="top-nav">
+        <div class="nav-box btn-hover" id="search-ui" style="display:none">
+            <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="nav-box btn-hover bg-white/5 border-white/20 uppercase">
+            <span class="text-[9px] header-font mr-3 hidden md:block">Join Community</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.5 18.5h-13v-13h13v13zM19.3 4.1L4.1 6.5v13.4l15.2-2.4V4.1zM11.5 11.1h1v1h-1v-1z"/></svg>
+        </a>
     </div>
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-zinc-950 border-r border-zinc-900 p-8 flex flex-col transform -translate-x-full overflow-y-auto">
-        <button onclick="toggleSidebar()" class="self-end text-zinc-500 hover:text-white uppercase text-[10px] btn-hover mb-12">Close</button>
-        
-        <div class="space-y-6 mb-12">
-            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">NAVIGATE</h4>
-            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Discord</a>
-            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Tiktok</a>
-            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Roblox</a>
-        </div>
+    <button id="sidebar-toggle" onclick="toggleSidebar()" class="fixed top-10 left-10 z-[100002] bg-black/50 p-3 border border-white/10 uppercase text-[10px] header-font btn-hover">Menu</button>
 
-        <div class="mt-auto border-t border-zinc-900 pt-8">
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-zinc-950 border-r border-zinc-900 p-10 flex flex-col transform -translate-x-full overflow-y-auto">
+        <button onclick="toggleSidebar()" class="self-end text-zinc-500 hover:text-white uppercase text-[10px] btn-hover mb-8">Close</button>
+        
+        <nav class="space-y-2 mb-8">
+            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-6">MAIN_ARCHIVE</h4>
+            <button onclick="switchTab('home')" id="home-tab" class="menu-link header-font btn-hover active uppercase">Home</button>
+            <button onclick="switchTab('shop')" id="shop-tab" class="menu-link header-font btn-hover uppercase">Shop</button>
+            
+            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mt-12 mb-6">COMMUNITY</h4>
+            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="menu-link header-font btn-hover uppercase">Discord</a>
+            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="menu-link header-font btn-hover uppercase">Tiktok</a>
+            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="menu-link header-font btn-hover uppercase">Roblox Profile</a>
+            <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="menu-link header-font btn-hover uppercase text-white/80">Roblox Group</a>
+
+            <button onclick="checkOwner()" class="block text-[10px] header-font text-zinc-800 hover:text-zinc-500 mt-16 text-left uppercase italic btn-hover">[ OWNER ACCESS ]</button>
+        </nav>
+
+        <div class="mt-auto">
             <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">FEEDBACK</h4>
-            <div class="space-y-4">
+            <div class="space-y-4 mb-8">
                 <input type="text" id="nama-saran" placeholder="NAME..." class="saran-input uppercase">
-                <textarea id="pesan-saran" rows="3" placeholder="YOUR MESSAGE..." class="saran-input uppercase"></textarea>
-                <button onclick="kirimSaran()" id="btn-saran" class="w-full py-2 border border-white/20 text-[10px] header-font hover:bg-white hover:text-black transition-all btn-hover">SEND TO ARCHIVE</button>
+                <textarea id="pesan-saran" rows="3" placeholder="MESSAGE..." class="saran-input uppercase"></textarea>
+                <button onclick="kirimSaran()" id="btn-saran" class="w-full py-2 border border-white/20 text-[10px] header-font hover:bg-white hover:text-black btn-hover">SEND MESSAGE</button>
+            </div>
+
+            <div class="border-t border-zinc-900 pt-6 pb-4">
+                <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">SETTINGS</h4>
+                <div class="space-y-1">
+                    <div class="text-[8px] text-zinc-500 uppercase mb-2">Logged in as: <span id="current-user-display" class="text-white font-bold">GUEST</span></div>
+                    <button onclick="toggleAudio()" id="audio-btn" class="setting-item btn-hover">MUTE AUDIO</button>
+                    <button onclick="handleLogout()" class="setting-item setting-danger btn-hover">LOGOUT</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <header class="text-center pt-60 mb-20 px-6 reveal">
+    <header class="text-center pt-60 mb-10 px-6 reveal">
         <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4">CROWSAINT</h1>
         <p class="text-zinc-600 text-[8px] md:text-[10px] tracking-[0.5em] uppercase italic">"Don't follow the crowd, lead the saint"</p>
     </header>
 
-    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12 px-4 md:px-20 mb-32"></div>
+    <main id="main-content" class="mb-32">
+        <section id="home-section" class="reveal">
+            <div class="lore-container">
+                <p>Dia tidak berasal dari tanah yang kau pijak. Di antara konstelasi yang belum terpetakan, ia adalah Sang Penjaga—seorang Kesatria Gagak Suci yang sayapnya menyentuh batas cakrawala abadi.</p>
+                <p>Namun, cahaya kesucian tak selamanya abadi. Dalam sebuah prahara langit, Sang Kesatria dikhianati. Ia dijatuhkan, terlempar menembus atmosfer dengan api yang membakar jubah putihnya menjadi hitam sekelam malam.</p>
+                <p>Kini, Sang Gagak mendarat di bumi. Ia membangun 'Archive'—sebuah tempat bagi mereka yang memimpin kegelapan dengan martabat seorang suci.</p>
+                <p class="text-center italic mt-16 tracking-[0.4em] text-[10px] text-white border-y border-white/10 py-8">"I AM THE SAINT OF THE VOID. WELCOME TO MY ARCHIVE."</p>
+            </div>
+        </section>
+        <section id="shop-section" class="hidden px-4 md:px-20">
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12"></div>
+        </section>
+    </main>
 
     <div class="fixed bottom-5 left-5 text-[9px] text-zinc-500 font-mono tracking-widest hidden md:block">
         <div id="digital-clock">00:00:00:00</div>
-        <div class="text-white/40">SYSTEM: STABLE | 2026</div>
+        <div class="text-white/40 uppercase italic">Status: Stable | Owner: Ferdi</div>
     </div>
 
     <audio id="bg-music" loop><source src="horror.mp3" type="audio/mpeg"></audio>
 
     <script>
         const audio = document.getElementById('bg-music');
-        const products = [
-            { name: "DARK ANGEL", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "1.jpg" },
-            { name: "PIXEL KNIGHT", link: "https://www.roblox.com/id/catalog/124309605398103/", img: "2.jpg" },
-            { name: "TRUE SPIRIT", link: "https://www.roblox.com/id/catalog/75655921151654/", img: "3.jpg" },
-            { name: "SKELETON VINTAGE", link: "https://www.roblox.com/id/catalog/132636175212887/", img: "4.jpg" },
-            { name: "CRIMSON TACTICAL", link: "https://www.roblox.com/id/catalog/110975831284516/", img: "5.jpg" },
-            { name: "ROYAL GOTH", link: "https://www.roblox.com/id/catalog/116830912569538/", img: "6.jpg" },
-            { name: "SHIBUYA RAVEN", link: "https://www.roblox.com/id/catalog/92039399309120/", img: "7.jpg" },
-            { name: "VOID STARE", link: "https://www.roblox.com/id/catalog/103938443054749/", img: "8.jpg" },
-            { name: "4TUNE TRACKSUIT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "9.jpg" }
-        ];
-
-        let filteredProducts = [...products];
-
-        // START SYSTEM
-        document.getElementById('btn-start').addEventListener('click', () => {
-            audio.volume = 1.0;
-            audio.play().catch(e => console.log("Audio Error"));
-            document.getElementById('pre-content').classList.add('hidden');
+        let localProducts = JSON.parse(localStorage.getItem('crowsaint_items')) || [];
+        let tempImgUrl = "";
+        let currentUser = "GUEST";
+        
+        // AUTHENTICATION LOGIC
+        function showLogin() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            // Play audio on interaction start
+            if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio Error")); }
+        }
+        function showRegister() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.remove('hidden');
+        }
+        function handleRegister() {
+            const user = document.getElementById('reg-user').value;
+            const pass = document.getElementById('reg-pass').value;
+            const conf = document.getElementById('reg-pass-conf').value;
+            
+            if(!user || !pass || !conf) return alert("FILL ALL FIELDS.");
+            if(pass !== conf) return alert("PASSWORDS DO NOT MATCH.");
+            
+            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+            if(users.find(u => u.username === user)) return alert("USERNAME TAKEN.");
+            
+            users.push({ username: user, password: pass });
+            localStorage.setItem('crowsaint_users', JSON.stringify(users));
+            alert("IDENTITY CREATED. PLEASE LOGIN.");
+            showLogin();
+        }
+        function handleLogin() {
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+            const valid = users.find(u => u.username === user && u.password === pass);
+            
+            if(valid) { 
+                currentUser = user;
+                document.getElementById('current-user-display').innerText = user.toUpperCase();
+                startLoading(); 
+            } else { alert("ACCESS DENIED. WRONG CREDENTIALS."); }
+        }
+        function startLoading() {
+            document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
             let progress = 0;
             const interval = setInterval(() => {
@@ -152,69 +252,147 @@
                 document.getElementById('progress-percent').innerText = progress + '%';
                 if(progress >= 100) { clearInterval(interval); document.getElementById('preloader').style.display = 'none'; }
             }, 100);
-        });
+        }
 
-        // DISCORD WEBHOOK FUNCTION
-        async function kirimSaran() {
-            const nama = document.getElementById('nama-saran').value;
-            const pesan = document.getElementById('pesan-saran').value;
-            const btn = document.getElementById('btn-saran');
-            const webhookUrl = "https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan";
+        // SETTINGS LOGIC
+        function handleLogout() {
+            if(confirm("ARE YOU SURE YOU WANT TO LOGOUT?")) {
+                location.reload(); // Reloads page to reset everything
+            }
+        }
+        function toggleAudio() {
+            const btn = document.getElementById('audio-btn');
+            if(audio.paused) {
+                audio.play();
+                btn.innerText = "MUTE AUDIO";
+            } else {
+                audio.pause();
+                btn.innerText = "UNMUTE AUDIO";
+            }
+        }
 
-            if(!nama || !pesan) return alert("NAMA DAN SARAN WAJIB DIISI!");
+        const initialProducts = [
+            { id: 1, name: "DARK ANGEL", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "1.jpg" },
+            { id: 2, name: "PIXEL KNIGHT", link: "https://www.roblox.com/id/catalog/124309605398103/", img: "2.jpg" },
+            { id: 3, name: "TRUE SPIRIT", link: "https://www.roblox.com/id/catalog/75655921151654/", img: "3.jpg" },
+            { id: 4, name: "SKELETON VINTAGE", link: "https://www.roblox.com/id/catalog/132636175212887/", img: "4.jpg" },
+            { id: 5, name: "CRIMSON TACTICAL", link: "https://www.roblox.com/id/catalog/110975831284516/", img: "5.jpg" },
+            { id: 6, name: "ROYAL GOTH", link: "https://www.roblox.com/id/catalog/116830912569538/", img: "6.jpg" },
+            { id: 7, name: "SHIBUYA RAVEN", link: "https://www.roblox.com/id/catalog/92039399309120/", img: "7.jpg" },
+            { id: 8, name: "VOID STARE", link: "https://www.roblox.com/id/catalog/103938443054749/", img: "8.jpg" },
+            { id: 9, name: "4TUNE TRACKSUIT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "9.jpg" }
+        ];
 
-            const data = {
-                username: "CROWSAINT SYSTEM",
-                embeds: [{
-                    title: "📩 NEW ARCHIVE FEEDBACK",
-                    color: 16777215,
-                    fields: [
-                        { name: "SENDER", value: `\`\`\`${nama}\`\`\`` },
-                        { name: "MESSAGE", value: `\`\`\`${pesan}\`\`\`` }
-                    ],
-                    footer: { text: "CROWSAINT.COM | TERMINAL 1.0" },
-                    timestamp: new Date()
-                }]
-            };
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    tempImgUrl = e.target.result;
+                    document.getElementById('file-name-display').innerText = input.files[0].name.toUpperCase();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-            try {
-                btn.innerText = "SENDING..."; btn.disabled = true;
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if(response.ok) {
-                    alert("SARAN BERHASIL DIKIRIM KE ARCHIVE!");
-                    document.getElementById('nama-saran').value = "";
-                    document.getElementById('pesan-saran').value = "";
-                } else { throw new Error(); }
-            } catch (err) { alert("GAGAL KIRIM! CEK KONEKSI LO."); }
-            finally { btn.innerText = "SEND TO ARCHIVE"; btn.disabled = false; }
+        function switchTab(tab) {
+            const homeSec = document.getElementById('home-section');
+            const shopSec = document.getElementById('shop-section');
+            const searchBox = document.getElementById('search-ui');
+            const homeTab = document.getElementById('home-tab');
+            const shopTab = document.getElementById('shop-tab');
+
+            if(tab === 'home') {
+                homeSec.classList.remove('hidden'); shopSec.classList.add('hidden'); searchBox.style.display = 'none';
+                homeTab.classList.add('active'); shopTab.classList.remove('active');
+            } else {
+                homeSec.classList.add('hidden'); shopSec.classList.remove('hidden'); searchBox.style.display = 'flex';
+                homeTab.classList.remove('active'); shopTab.classList.add('active');
+                renderProducts();
+            }
+            toggleSidebar();
+        }
+
+        function checkOwner() {
+            const pw = prompt("ENTER ACCESS KEY:");
+            if(pw === "admin123") { toggleOwnerModal(); } else { alert("ACCESS DENIED."); }
+        }
+
+        function toggleOwnerModal() {
+            document.getElementById('owner-modal').classList.toggle('active');
+            document.getElementById('modal-overlay').classList.toggle('active');
+        }
+
+        function saveNewProduct() {
+            const name = document.getElementById('new-name').value;
+            const link = document.getElementById('new-link').value;
+            if(!tempImgUrl || !name || !link) return alert("COMPLETE ALL FIELDS!");
+            
+            const newItem = { id: Date.now(), name: name.toUpperCase(), link: link, img: tempImgUrl, isLocal: true };
+            localProducts.push(newItem);
+            localStorage.setItem('crowsaint_items', JSON.stringify(localProducts));
+            renderProducts();
+            toggleOwnerModal();
+        }
+
+        function deleteProduct(id) {
+            if(!confirm("DELETE THIS PRODUCT?")) return;
+            localProducts = localProducts.filter(p => p.id !== id);
+            localStorage.setItem('crowsaint_items', JSON.stringify(localProducts));
+            renderProducts();
         }
 
         function renderProducts() {
+            const allProducts = [...initialProducts, ...localProducts];
+            const q = document.getElementById('search-bar').value.toUpperCase();
+            const filtered = allProducts.filter(p => p.name.includes(q));
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = filteredProducts.map(p => `
+            
+            grid.innerHTML = filtered.map(p => `
                 <div class="card-glow reveal p-3 md:p-6 bg-black/40 backdrop-blur-sm">
+                    ${p.isLocal ? `<div class="delete-badge" onclick="deleteProduct(${p.id})">DELETE</div>` : ''}
                     <div class="aspect-square bg-zinc-950 mb-4 border border-zinc-900 overflow-hidden flex items-center justify-center">
                         <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain">
                     </div>
                     <div class="flex flex-col md:flex-row justify-between items-center gap-2">
                         <h3 class="header-font text-[7px] md:text-[10px] uppercase truncate w-full">${p.name}</h3>
-                        <a href="${p.link}" target="_blank" class="w-full md:w-auto text-center px-4 py-1 border border-zinc-800 hover:border-white text-[8px] btn-hover">BUY</a>
+                        <a href="${p.link}" target="_blank" class="w-full md:w-auto text-center px-4 py-1 border border-zinc-800 hover:border-white text-[8px] btn-hover uppercase">Buy</a>
                     </div>
                 </div>
             `).join('');
             attachCursorEvents();
         }
 
-        function handleSearch() {
-            const q = document.getElementById('search-bar').value.toUpperCase();
-            filteredProducts = products.filter(p => p.name.includes(q)); renderProducts();
+        function handleSearch() { renderProducts(); }
+
+        async function kirimSaran() {
+            const nama = document.getElementById('nama-saran').value;
+            const pesan = document.getElementById('pesan-saran').value;
+            const btn = document.getElementById('btn-saran');
+            if(!nama || !pesan) return alert("FILL THE FORM!");
+            const data = { username: "CROWSAINT LORE BOT", embeds: [{ title: "📩 NEW FEEDBACK", color: 16777215, fields: [{ name: "SENDER", value: `\`\`\`${nama}\`\`\`` }, { name: "MESSAGE", value: `\`\`\`${pesan}\`\`\`` }], timestamp: new Date() }] };
+            try {
+                btn.innerText = "SENDING..."; btn.disabled = true;
+                await fetch("https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                alert("MESSAGE ARCHIVED!"); document.getElementById('nama-saran').value = ""; document.getElementById('pesan-saran').value = "";
+            } catch (err) { alert("ERROR!"); }
+            finally { btn.innerText = "SEND MESSAGE"; btn.disabled = false; }
         }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
+        // FIXED TOGGLE SIDEBAR LOGIC (BUTTON HIDES WHEN OPEN)
+        function toggleSidebar() { 
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                // Sidebar tertutup -> Tombol muncul
+                toggleBtn.classList.remove('hidden');
+            } else {
+                // Sidebar terbuka -> Tombol sembunyi
+                toggleBtn.classList.add('hidden');
+            }
+        }
 
         const cursor = document.getElementById('cursor');
         const border = document.getElementById('cursor-border');
@@ -224,7 +402,7 @@
         });
 
         function attachCursorEvents() {
-            document.querySelectorAll('.btn-hover, a, button, input, textarea').forEach(el => {
+            document.querySelectorAll('.btn-hover, a, button, input, textarea, .file-input-wrapper, .delete-badge, .auth-link, .setting-item').forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
             });
@@ -255,4 +433,3 @@
     </script>
 </body>
 </html>
-
