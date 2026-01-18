@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CROWSAINT | THE ARCHIVE</title>
+    <title>CROWSAINT | OFFICIAL ARCHIVE</title>
     
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,130 +12,115 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap');
         
-        /* CURSOR SYSTEM - CROW VERSION */
+        /* CURSOR SYSTEM */
         * { cursor: none !important; }
-        @media (pointer: coarse) {
-            #cursor, #cursor-border { display: none !important; }
-            * { cursor: auto !important; }
-        }
-        #cursor {
-            position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; 
-            transition: transform 0.1s ease-out; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;
-        }
-        #cursor svg { width: 35px; height: auto; fill: white; animation: crowFlap 0.8s ease-in-out infinite alternate; transition: all 0.3s ease; }
-        @keyframes crowFlap { 0% { transform: translateY(0) scaleY(1); } 100% { transform: translateY(-5px) scaleY(0.85); } }
+        @media (pointer: coarse) { #cursor, #cursor-border { display: none !important; } * { cursor: auto !important; } }
+        #cursor { position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; transition: transform 0.1s ease-out; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; }
+        #cursor svg { width: 35px; fill: white; animation: crowFlap 0.8s infinite alternate; }
+        @keyframes crowFlap { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
         #cursor-border { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
-        .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 15px #fff); }
+        .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
 
         /* GENERAL STYLE */
-        body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; scroll-behavior: smooth; }
+        body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; }
         .header-font { font-family: 'Syncopate', sans-serif; }
         
-        /* SCANLINES */
-        body::before {
-            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
-            z-index: 9999; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        /* PRELOADER */
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
+        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; }
+        .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px #fff; }
+
+        /* PRODUCT CARD - ZOOM & GLOW */
+        .card-glow { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #18181b; }
+        .card-glow:hover { 
+            transform: translateY(-10px) scale(1.02); 
+            border-color: #fff; 
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); 
+            background: rgba(255, 255, 255, 0.05);
         }
+        .card-glow img { transition: transform 0.7s ease; }
+        .card-glow:hover img { transform: scale(1.15); filter: brightness(1.1); }
 
-        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-
-        /* PRELOADER STYLE */
-        #preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
-            z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.5s ease;
-        }
-        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; position: relative; }
-        .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 40px #fff; }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #fff; box-shadow: 0 0 10px #fff; }
-
-        /* NAV & SIDEBAR */
-        .nav-item { position: fixed; z-index: 90000; pointer-events: auto; }
-        .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; padding: 5px; color: #fff; font-size: 10px; transition: all 0.5s; letter-spacing: 2px; }
+        /* NAVIGATION & SIDEBAR */
+        .nav-item { position: fixed; z-index: 90000; }
+        .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; transition: all 0.5s; font-size: 10px; color: #fff; outline: none; }
         .search-container:hover .search-input, .search-input:focus { width: 120px; opacity: 1; margin-right: 10px; }
         #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
+
+        /* FEEDBACK FORM STYLE */
+        .saran-input { background: transparent; border: 1px solid #333; padding: 10px; width: 100%; color: white; font-size: 10px; outline: none; transition: 0.3s; }
+        .saran-input:focus { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #fff; box-shadow: 0 0 10px #fff; }
     </style>
 </head>
 <body>
 
-    <canvas id="starfield"></canvas>
+    <canvas id="starfield" class="fixed inset-0 z-[-1]"></canvas>
 
     <div id="preloader">
         <div id="pre-content" class="flex flex-col items-center">
-            <div class="header-font text-[10px] md:text-[14px] tracking-[1.5em] mb-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">CROWSAINT</div>
-            <div class="text-[7px] font-mono text-zinc-500 mb-12 tracking-[0.3em] uppercase italic">[ Connection Encrypted: Secure ]</div>
-            
-            <div class="relative group">
-                <div class="absolute -inset-6 border border-white/5 rounded-full animate-pulse opacity-20"></div>
-                <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
-            </div>
-            
-            <p class="mt-12 text-[7px] text-zinc-700 tracking-[0.8em] uppercase italic">Initializing System 2.0.2.6</p>
+            <div class="header-font text-[12px] tracking-[1.5em] mb-8 text-white">CROWSAINT</div>
+            <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
         </div>
-
         <div id="loading-status" class="hidden flex flex-col items-center mt-10">
-            <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4" id="loader-text">DECRYPTING ARCHIVE...</div>
+            <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4">DECRYPTING ARCHIVE...</div>
             <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative">
-                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300 shadow-[0_0_10px_#fff]"></div>
+                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300 shadow-[0_0_15px_#fff]"></div>
             </div>
-            <div class="mt-4 text-[7px] text-zinc-500 font-mono" id="progress-percent">0%</div>
+            <div id="progress-percent" class="mt-4 text-[7px] text-zinc-500 font-mono">0%</div>
         </div>
     </div>
 
-    <div id="cursor">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/>
-        </svg>
-    </div>
+    <div id="cursor"><svg viewBox="0 0 24 24"><path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/></svg></div>
     <div id="cursor-border"></div>
 
-    <button onclick="toggleSidebar()" class="nav-item top-10 left-10 group bg-black/40 p-3 backdrop-blur-md border border-white/10 btn-hover">
+    <button onclick="toggleSidebar()" class="nav-item top-10 left-10 group bg-black/40 p-3 border border-white/10 btn-hover">
         <div class="w-6 h-0.5 bg-white mb-1.5 transition-all group-hover:w-10"></div>
         <div class="w-10 h-0.5 bg-white mb-1.5"></div>
         <div class="w-4 h-0.5 bg-white transition-all group-hover:w-10"></div>
     </button>
 
-    <div class="nav-item search-container top-10 right-10 btn-hover bg-black/40 p-3 backdrop-blur-md border border-white/10 flex items-center">
-        <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase outline-none">
+    <div class="nav-item search-container top-10 right-10 btn-hover bg-black/40 p-3 border border-white/10 flex items-center">
+        <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </div>
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-full md:w-80 bg-zinc-950 transform -translate-x-full border-r border-zinc-900 p-12 flex flex-col justify-center">
-        <div class="absolute top-10 left-10 right-10 flex justify-between items-center">
-            <span class="header-font text-[8px] text-white tracking-widest">ARCHIVE_ACCESS</span>
-            <button onclick="toggleSidebar()" class="text-zinc-500 hover:text-white uppercase text-[10px] btn-hover">Close</button>
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-zinc-950 border-r border-zinc-900 p-8 flex flex-col transform -translate-x-full overflow-y-auto">
+        <button onclick="toggleSidebar()" class="self-end text-zinc-500 hover:text-white uppercase text-[10px] btn-hover mb-12">Close</button>
+        
+        <div class="space-y-6 mb-12">
+            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">NAVIGATE</h4>
+            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Discord</a>
+            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Tiktok</a>
+            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="block text-lg header-font hover:text-white btn-hover uppercase">Roblox</a>
         </div>
-        <div class="space-y-8">
-            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="block text-xl header-font hover:text-white btn-hover uppercase">Discord</a>
-            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="block text-xl header-font hover:text-white btn-hover uppercase">Tiktok</a>
-            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="block text-xl header-font hover:text-white btn-hover uppercase">Roblox</a>
+
+        <div class="mt-auto border-t border-zinc-900 pt-8">
+            <h4 class="text-[9px] header-font text-zinc-600 tracking-widest mb-4">FEEDBACK</h4>
+            <div class="space-y-4">
+                <input type="text" id="nama-saran" placeholder="NAME..." class="saran-input uppercase">
+                <textarea id="pesan-saran" rows="3" placeholder="YOUR MESSAGE..." class="saran-input uppercase"></textarea>
+                <button onclick="kirimSaran()" id="btn-saran" class="w-full py-2 border border-white/20 text-[10px] header-font hover:bg-white hover:text-black transition-all btn-hover">SEND TO ARCHIVE</button>
+            </div>
         </div>
     </div>
 
-    <header class="relative text-center mb-20 flex flex-col items-center justify-center pt-60 px-6 reveal">
-        <h1 class="header-font text-4xl md:text-8xl tracking-tighter mb-4">CROWSAINT</h1>
+    <header class="text-center pt-60 mb-20 px-6 reveal">
+        <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4">CROWSAINT</h1>
         <p class="text-zinc-600 text-[8px] md:text-[10px] tracking-[0.5em] uppercase italic">"Don't follow the crowd, lead the saint"</p>
     </header>
 
     <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12 px-4 md:px-20 mb-32"></div>
 
-    <div class="fixed bottom-5 left-5 text-[7px] md:text-[9px] text-zinc-500 font-mono tracking-widest uppercase z-[90000] hidden md:block">
-        <div>User: ARCHIVE_ADMIN</div>
+    <div class="fixed bottom-5 left-5 text-[9px] text-zinc-500 font-mono tracking-widest hidden md:block">
         <div id="digital-clock">00:00:00:00</div>
-        <div class="text-white/40">Status: System Operational</div>
+        <div class="text-white/40">SYSTEM: STABLE | 2026</div>
     </div>
 
-    <footer class="mt-20 text-center border-t border-zinc-900 pt-20 pb-10">
-        <p class="text-[8px] text-zinc-800 tracking-[1em] uppercase">CROWSAINT CLAN ARCHIVE 2026</p>
-    </footer>
-
-    <audio id="bg-music" loop preload="auto"><source src="horror.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop><source src="horror.mp3" type="audio/mpeg"></audio>
 
     <script>
         const audio = document.getElementById('bg-music');
@@ -157,35 +142,67 @@
         document.getElementById('btn-start').addEventListener('click', () => {
             audio.volume = 0.4;
             audio.play().catch(e => console.log("Audio Error"));
-
             document.getElementById('pre-content').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
-            
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 1;
+                progress += Math.floor(Math.random() * 10) + 1;
                 if (progress > 100) progress = 100;
                 document.getElementById('progress-bar').style.width = progress + '%';
                 document.getElementById('progress-percent').innerText = progress + '%';
-                
-                if(progress >= 100) {
-                    clearInterval(interval);
-                    document.getElementById('preloader').style.opacity = '0';
-                    setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 1000);
-                }
+                if(progress >= 100) { clearInterval(interval); document.getElementById('preloader').style.display = 'none'; }
             }, 100);
         });
+
+        // DISCORD WEBHOOK FUNCTION
+        async function kirimSaran() {
+            const nama = document.getElementById('nama-saran').value;
+            const pesan = document.getElementById('pesan-saran').value;
+            const btn = document.getElementById('btn-saran');
+            const webhookUrl = "https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan";
+
+            if(!nama || !pesan) return alert("NAMA DAN SARAN WAJIB DIISI!");
+
+            const data = {
+                username: "CROWSAINT SYSTEM",
+                embeds: [{
+                    title: "📩 NEW ARCHIVE FEEDBACK",
+                    color: 16777215,
+                    fields: [
+                        { name: "SENDER", value: `\`\`\`${nama}\`\`\`` },
+                        { name: "MESSAGE", value: `\`\`\`${pesan}\`\`\`` }
+                    ],
+                    footer: { text: "CROWSAINT.COM | TERMINAL 1.0" },
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                btn.innerText = "SENDING..."; btn.disabled = true;
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if(response.ok) {
+                    alert("SARAN BERHASIL DIKIRIM KE ARCHIVE!");
+                    document.getElementById('nama-saran').value = "";
+                    document.getElementById('pesan-saran').value = "";
+                } else { throw new Error(); }
+            } catch (err) { alert("GAGAL KIRIM! CEK KONEKSI LO."); }
+            finally { btn.innerText = "SEND TO ARCHIVE"; btn.disabled = false; }
+        }
 
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = filteredProducts.map(p => `
-                <div class="card-glow reveal border border-zinc-900 p-3 md:p-6 bg-black/40 backdrop-blur-sm transition-all duration-500">
-                    <div class="aspect-square bg-zinc-950 mb-4 border border-zinc-900 flex items-center justify-center overflow-hidden">
-                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain hover:scale-110 transition duration-700">
+                <div class="card-glow reveal p-3 md:p-6 bg-black/40 backdrop-blur-sm">
+                    <div class="aspect-square bg-zinc-950 mb-4 border border-zinc-900 overflow-hidden flex items-center justify-center">
+                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain">
                     </div>
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-2">
                         <h3 class="header-font text-[7px] md:text-[10px] uppercase truncate w-full">${p.name}</h3>
-                        <a href="${p.link}" target="_blank" class="w-full md:w-auto text-center px-3 py-1 border border-zinc-800 hover:border-white text-[8px] btn-hover">BUY</a>
+                        <a href="${p.link}" target="_blank" class="w-full md:w-auto text-center px-4 py-1 border border-zinc-800 hover:border-white text-[8px] btn-hover">BUY</a>
                     </div>
                 </div>
             `).join('');
@@ -197,19 +214,8 @@
             filteredProducts = products.filter(p => p.name.includes(q)); renderProducts();
         }
 
-        // CLOCK
-        function updateClock() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            const ms = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
-            const clockEl = document.getElementById('digital-clock');
-            if(clockEl) clockEl.innerText = `${h}:${m}:${s}:${ms}`;
-        }
-        setInterval(updateClock, 10);
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
 
-        // CURSOR
         const cursor = document.getElementById('cursor');
         const border = document.getElementById('cursor-border');
         document.addEventListener('mousemove', (e) => {
@@ -218,13 +224,19 @@
         });
 
         function attachCursorEvents() {
-            document.querySelectorAll('.btn-hover, a, button, input').forEach(el => {
+            document.querySelectorAll('.btn-hover, a, button, input, textarea').forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
             });
         }
 
-        // BACKGROUND
+        function updateClock() {
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0') + ":" + now.getSeconds().toString().padStart(2,'0') + ":" + Math.floor(now.getMilliseconds()/10).toString().padStart(2,'0');
+            const el = document.getElementById('digital-clock'); if(el) el.innerText = time;
+        }
+        setInterval(updateClock, 10);
+
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -238,7 +250,6 @@
             requestAnimationFrame(drawStars);
         }
         window.addEventListener('resize', initStars); initStars(); drawStars();
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
         renderProducts();
         ScrollReveal().reveal('.reveal', { distance: '20px', duration: 800, interval: 100 });
     </script>
