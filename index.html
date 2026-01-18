@@ -339,8 +339,9 @@
     const user = document.getElementById('login-user').value.toUpperCase().trim();
     const pass = document.getElementById('login-pass').value;
 
-    console.log("LOGGING IN AS:", user); // DEBUG
+    if(!user || !pass) return alert("IDENTIFY YOURSELF FIRST.");
 
+    // 1. CEK KE CLOUD (SUPABASE)
     const { data: foundUser, error } = await supabaseClient
         .from('leaderboard')
         .select('*')
@@ -350,23 +351,41 @@
 
     if (error) {
         console.error("SUPABASE ERROR:", error.message);
-        alert("ACCESS DENIED: " + error.message); 
+        alert("ACCESS DENIED: IDENTITY NOT FOUND IN ARCHIVE.");
         return;
     }
 
     if (foundUser) { 
+        // 2. SET USER AKTIF
         currentUser = foundUser; 
         
-        // Simpan ke LocalStorage juga biar sidebar dapet data
-        localStorage.setItem('crowsaint_current_user', JSON.stringify(foundUser));
+        // 3. SIMPAN SESI KE DEVICE (Penting biar bisa login di banyak device)
+        localStorage.setItem('crowsaint_session', JSON.stringify(foundUser));
         
+        // 4. UPDATE UI & JALANKAN LOADING
         saveLoginLog(user); 
         updateProfileUI(); 
         startLoading(); 
-    } else { 
-        alert("ACCESS DENIED: IDENTITY NOT FOUND."); 
+        
+        console.log("GLOBAL ACCESS GRANTED FOR:", user);
     }
 }
+
+// 5. AUTO-LOAD SESI (Taruh ini di paling bawah kodingan JS lo biar pas buka di HP langsung masuk)
+window.addEventListener('DOMContentLoaded', () => {
+    const savedSession = localStorage.getItem('crowsaint_session');
+    if (savedSession) {
+        currentUser = JSON.parse(savedSession);
+        // Langsung buka archive tanpa login ulang
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('main-nav').classList.remove('hidden');
+        document.getElementById('sidebar-toggle').classList.remove('hidden');
+        updateProfileUI();
+        renderProducts();
+        console.log("SESSION RESTORED FROM CLOUD.");
+    }
+    });
+
 
         // --- PROFILE SYSTEM ---
         function updateProfileUI() {
@@ -622,6 +641,18 @@
                 content.innerHTML = `<div class="text-red-500 text-[8px] text-center">FAILED TO LOAD GLOBAL DATA.</div>`;
             }
         }
+        window.onload = () => {
+    const session = localStorage.getItem('crowsaint_session');
+    if (session) {
+        currentUser = JSON.parse(session);
+        // Langsung lompat ke dashboard kalau sudah pernah login di device ini
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('main-nav').classList.remove('hidden');
+        document.getElementById('sidebar-toggle').classList.remove('hidden');
+        updateProfileUI();
+        renderProducts();
+    }
+    };
     </script>jk
 </body>
 </html>
