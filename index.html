@@ -335,28 +335,37 @@
                 }
             }, 80);
         }
-        async function handleRegister() {
-    const user = document.getElementById('reg-user').value.toUpperCase().trim();
-    const pass = document.getElementById('reg-pass').value;
-    const conf = document.getElementById('reg-pass-conf').value;
+        async function handleLogin() {
+    const user = document.getElementById('login-user').value.toUpperCase().trim();
+    const pass = document.getElementById('login-pass').value;
 
-    if(!user || !pass || !conf) return alert("EMPTY FIELDS.");
-    if(pass !== conf) return alert("PASSWORD MISMATCH.");
+    console.log("LOGGING IN AS:", user); // DEBUG
 
-    // Kirim data ke tabel 'users' di Supabase
-    const { error } = await supabaseClient
-        .from('leaderboard') // Kita pake tabel yang sama tapi tambahin kolom password
-        .upsert({ 
-            username: user, 
-            password: pass, // PASTIIN DI SUPABASE SUDAH ADA KOLOM 'password' (Type: text)
-            pic: "logo.png",
-            rank: "SAINT INITIATE",
-            points: 0
-        });
+    const { data: foundUser, error } = await supabaseClient
+        .from('leaderboard')
+        .select('*')
+        .eq('username', user)
+        .eq('password', pass)
+        .single();
 
-    if (error) return alert("REGISTER FAILED: " + error.message);
-    alert("IDENTITY ESTABLISHED IN THE CLOUD.");
-    showLogin();
+    if (error) {
+        console.error("SUPABASE ERROR:", error.message);
+        alert("ACCESS DENIED: " + error.message); 
+        return;
+    }
+
+    if (foundUser) { 
+        currentUser = foundUser; 
+        
+        // Simpan ke LocalStorage juga biar sidebar dapet data
+        localStorage.setItem('crowsaint_current_user', JSON.stringify(foundUser));
+        
+        saveLoginLog(user); 
+        updateProfileUI(); 
+        startLoading(); 
+    } else { 
+        alert("ACCESS DENIED: IDENTITY NOT FOUND."); 
+    }
 }
 
         // --- PROFILE SYSTEM ---
