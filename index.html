@@ -3,142 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>CROWSAINT | OFFICIAL ARCHIVE</title>
+    <meta name="description" content="Official Digital Archive of CROWSAINT. Enter the void.">
     
     <link rel="icon" type="image/png" href="logo.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap');
         
+        /* CURSOR SYSTEM - WHITE GLOW */
         * { cursor: none !important; }
-        #cursor { position: fixed; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference; transition: transform 0.2s; }
-        #cursor-border { position: fixed; width: 24px; height: 24px; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.1s ease-out; }
-        .cursor-hover #cursor { transform: scale(3); background: #00ff88; }
-        .cursor-hover #cursor-border { opacity: 0; }
+        #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transition: transform 0.2s; }
+        #cursor-border { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.1s ease-out; }
+        .cursor-hover #cursor { transform: scale(4); background: #fff; box-shadow: 0 0 20px #fff; }
 
         body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; scroll-behavior: smooth; }
         .header-font { font-family: 'Syncopate', sans-serif; }
         
+        /* SCANLINES */
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 999; background-size: 100% 4px, 3px 100%; pointer-events: none;
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+            z-index: 9999; background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
 
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* PRELOADER */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
-            z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease;
+            z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.5s ease;
         }
 
-        #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); }
-        #suggestion-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-
-        .search-container { position: fixed; top: 40px; right: 40px; z-index: 50; display: flex; align-items: center; }
+        /* STICKY NAV */
+        .nav-item { position: fixed; z-index: 90000; pointer-events: auto; }
+        .search-container { top: 40px; right: 40px; display: flex; align-items: center; }
         .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; padding: 5px; color: #fff; font-size: 10px; transition: all 0.5s; letter-spacing: 2px; }
         .search-container:hover .search-input, .search-input:focus { width: 150px; opacity: 1; margin-right: 10px; }
 
-        .page-btn { padding: 10px 18px; border: 1px solid #1a1a1a; transition: all 0.3s; font-size: 12px; }
-        .page-btn.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
-
-        .card-glow:hover { box-shadow: 0 0 30px rgba(255,255,255,0.05); border-color: #fff; transform: translateY(-5px); }
+        /* WHITE GLOW EFFECTS */
+        .card-glow:hover { box-shadow: 0 0 30px rgba(255,255,255,0.2); border-color: #fff; transform: translateY(-5px); }
         .glitch:hover { animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite; }
         @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
+    
+        .enter-btn { padding: 20px 40px; border: 1px solid #fff; font-size: 12px; letter-spacing: 5px; transition: all 0.5s; position: relative; z-index: 100005; background: black; color: white; }
+        .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 40px #fff; }
+
+        #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
     </style>
 </head>
 <body>
 
+    <canvas id="starfield"></canvas>
+
     <div id="preloader">
-        <div class="header-font text-xs tracking-[1em] mb-4 animate-pulse">CROWSAINT</div>
-        <div class="text-[8px] tracking-[0.5em] text-zinc-500 uppercase italic" id="loader-text">Authenticating Archive...</div>
+        <div id="pre-content" class="flex flex-col items-center">
+            <div class="header-font text-sm tracking-[1.5em] mb-12 animate-pulse text-white">CROWSAINT</div>
+            <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
+            <p class="mt-8 text-[8px] text-zinc-600 tracking-widest italic uppercase">Syncing local audio assets...</p>
+        </div>
+        <div id="loading-status" class="hidden flex flex-col items-center mt-10">
+            <div class="text-[8px] tracking-[0.5em] text-zinc-400 uppercase italic animate-pulse" id="loader-text">Decrypting...</div>
+            <div class="w-64 h-[1px] bg-zinc-900 mt-6 overflow-hidden">
+                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-1000"></div>
+            </div>
+        </div>
     </div>
 
     <div id="cursor"></div>
     <div id="cursor-border"></div>
 
-    <button onclick="toggleSidebar()" class="fixed top-10 left-10 z-50 group btn-hover">
+    <button onclick="toggleSidebar()" class="nav-item top-10 left-10 group bg-black/40 p-3 backdrop-blur-md border border-white/10 btn-hover">
         <div class="w-8 h-0.5 bg-white mb-2 transition-all group-hover:w-12"></div>
         <div class="w-12 h-0.5 bg-white mb-2"></div>
         <div class="w-6 h-0.5 bg-white transition-all group-hover:w-12"></div>
     </button>
 
-    <div class="search-container btn-hover">
+    <div class="nav-item search-container btn-hover bg-black/40 p-3 backdrop-blur-md border border-white/10">
         <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </div>
 
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-full md:w-80 bg-zinc-950 z-[1001] transform -translate-x-full border-r border-zinc-900 p-12 flex flex-col justify-center">
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-full md:w-80 bg-zinc-950 transform -translate-x-full border-r border-zinc-900 p-12 flex flex-col justify-center">
         <div class="absolute top-10 left-10 right-10 flex justify-between items-center">
-            <span class="header-font text-xs tracking-[0.5em] text-white">MENU</span>
-            <button onclick="toggleSidebar()" class="text-zinc-500 hover:text-white uppercase text-[10px] tracking-widest btn-hover transition-all">Close</button>
+            <span class="header-font text-xs tracking-[0.5em] text-white">SYSTEM</span>
+            <button onclick="toggleSidebar()" class="text-zinc-500 hover:text-white uppercase text-[10px] tracking-widest btn-hover">Close</button>
         </div>
-
         <div class="space-y-8">
-            <p class="text-[10px] text-zinc-600 tracking-[0.5em] uppercase mb-4 italic">Social Archive</p>
-            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="block text-2xl header-font hover:text-green-400 transition-all btn-hover uppercase">Discord</a>
-            <a href="https://www.tiktok.com/@ferdi_wp3?_r=1&_t=ZS-93ADePF6ERb" target="_blank" class="block text-2xl header-font hover:text-green-400 transition-all btn-hover uppercase">Tiktok</a>
-            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="block text-2xl header-font hover:text-green-400 transition-all btn-hover uppercase">Roblox</a>
-            <button onclick="openSaran()" class="block text-2xl header-font text-left hover:text-white transition-all btn-hover uppercase">Saran</button>
+            <a href="https://discord.gg/4KtcGzm7t" target="_blank" class="block text-2xl header-font hover:text-white btn-hover uppercase">Discord</a>
+            <a href="https://www.tiktok.com/@ferdi_wp3" target="_blank" class="block text-2xl header-font hover:text-white btn-hover uppercase">Tiktok</a>
+            <a href="https://www.roblox.com/id/users/7034402955/profile" target="_blank" class="block text-2xl header-font hover:text-white btn-hover uppercase">Roblox</a>
         </div>
     </div>
 
-    <div id="suggestion-modal">
-        <div class="w-full max-w-md p-8 border border-zinc-800 bg-black relative">
-            <h2 class="header-font text-xl mb-6 tracking-tighter uppercase">Feedback Archive</h2>
-            <textarea id="saran-text" class="w-full h-40 bg-zinc-950 border border-zinc-900 p-4 text-xs text-white focus:outline-none focus:border-white transition-all mb-4" placeholder="Tulis saran untuk clan di sini..."></textarea>
-            <div class="flex justify-between items-center">
-                <button onclick="closeSaran()" class="text-[10px] text-zinc-500 hover:text-white uppercase tracking-widest btn-hover">Cancel</button>
-                <button id="send-btn" onclick="sendToDiscord()" class="px-6 py-2 border border-white text-[10px] font-bold uppercase hover:bg-white hover:text-black transition-all btn-hover">Send Archive</button>
-            </div>
-        </div>
-    </div>
-
-    <header class="relative text-center mb-32 flex flex-col items-center justify-center pt-20 reveal">
-        <div class="absolute -z-10 opacity-20 w-64 md:w-96"><img src="logo.png" alt="Logo" class="w-full h-auto"></div>
-        <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4 relative glitch">CROWSAINT</h1>
+    <header class="relative text-center mb-32 flex flex-col items-center justify-center pt-60 reveal">
+        <div class="absolute -z-10 opacity-10 w-64 md:w-96 animate-pulse"><img src="logo.png" alt="Logo" class="w-full h-auto"></div>
+        <h1 class="header-font text-5xl md:text-8xl tracking-tighter mb-4 glitch">CROWSAINT</h1>
         <p class="text-zinc-600 text-[10px] tracking-[0.8em] mb-12 uppercase italic relative">"Don't follow the crowd, lead the saint"</p>
-        <a href="https://www.roblox.com/share/g/651113905" target="_blank" class="px-10 py-4 border border-white hover:bg-white hover:text-black transition duration-700 font-bold text-xs uppercase tracking-widest relative btn-hover">Join Community</a>
     </header>
 
     <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-4 md:px-20"></div>
-    <div id="pagination" class="mt-20 flex justify-center items-center space-x-4 reveal pb-20"></div>
 
     <footer class="mt-20 text-center border-t border-zinc-900 pt-20 pb-10 reveal">
-        <p class="text-[10px] text-zinc-800 tracking-[1em] uppercase mb-4">CROWSAINT CLAN ARCHIVE 2026</p>
+        <p class="text-[10px] text-zinc-800 tracking-[1em] uppercase">CROWSAINT CLAN ARCHIVE 2026</p>
     </footer>
 
-    <script>
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1462290709179793408/NefcPlviJPdzjwBZ9BeT_Bs7M5E0jORLBc_TKiq45vF5jiZxR0m__deOUpu7exskxSan";
+    <audio id="bg-music" loop>
+        <source src="horror.mp3" type="audio/mpeg">
+    </audio>
 
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            const texts = ["Authenticating...", "Accessing Database...", "Welcome, Saint."];
-            let i = 0;
+    <script>
+        const audio = document.getElementById('bg-music');
+        const btnStart = document.getElementById('btn-start');
+        
+        btnStart.addEventListener('click', () => {
+            audio.volume = 0.5;
+            audio.play().then(() => {
+                console.log("Audio Local Aktif!");
+            }).catch(e => {
+                console.log("File horror.mp3 tidak ditemukan atau diblokir.");
+            });
+
+            document.getElementById('pre-content').classList.add('hidden');
+            document.getElementById('loading-status').classList.remove('hidden');
+            
+            let progress = 0;
             const interval = setInterval(() => {
-                document.getElementById('loader-text').innerText = texts[i];
-                i++;
-                if(i >= texts.length) { clearInterval(interval); preloader.style.opacity = '0'; setTimeout(() => preloader.style.display = 'none', 1000); }
-            }, 400);
+                progress += 2;
+                document.getElementById('progress-bar').style.width = progress + '%';
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('preloader').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 1000);
+                }
+            }, 50);
         });
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
-        function openSaran() { toggleSidebar(); document.getElementById('suggestion-modal').style.display = 'flex'; }
-        function closeSaran() { document.getElementById('suggestion-modal').style.display = 'none'; }
-        
-        async function sendToDiscord() {
-            const btn = document.getElementById('send-btn');
-            const text = document.getElementById('saran-text').value;
-            if(!text) return alert("Ketik sesuatu!");
-            btn.innerText = "SENDING...";
-            try {
-                await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "New Archive Suggestion", description: text, color: 0x000000, timestamp: new Date().toISOString() }] }) });
-                alert("Archive Updated.");
-                document.getElementById('saran-text').value = '';
-                closeSaran();
-            } catch (err) { alert("Error connecting to Discord."); }
-            btn.innerText = "SEND ARCHIVE";
+        const cursor = document.getElementById('cursor');
+        const border = document.getElementById('cursor-border');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+            border.style.left = e.clientX + 'px'; border.style.top = e.clientY + 'px';
+        });
+
+        function attachCursorEvents() {
+            document.querySelectorAll('.btn-hover, a, button, input').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            });
         }
 
         const products = [
@@ -153,56 +169,42 @@
             { name: "4TUNE TRACKSUIT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "9.jpg" }
         ];
 
-        let currentPage = 1;
-        const itemsPerPage = 9;
-        let currentFiltered = [...products];
-
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
-            const start = (currentPage - 1) * itemsPerPage;
-            currentFiltered.slice(start, start + itemsPerPage).forEach(p => {
+            products.forEach(p => {
                 grid.innerHTML += `
                     <div class="card-glow reveal group border border-zinc-900 p-6 bg-black/40 backdrop-blur-sm transition-all duration-500">
                         <div class="aspect-square bg-zinc-950 overflow-hidden mb-8 border border-zinc-900 flex items-center justify-center">
-                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain group-hover:scale-110 transition duration-[1s]">
+                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain group-hover:scale-110 transition duration-700">
                         </div>
                         <div class="flex justify-between items-center">
-                            <div><h3 class="header-font text-[12px] tracking-tighter mb-1 uppercase">${p.name}</h3><p class="text-[8px] text-zinc-700 tracking-widest uppercase italic font-bold">CROWSAINT ASSET</p></div>
-                            <a href="${p.link}" target="_blank" class="px-5 py-2 border border-zinc-800 hover:border-white text-[10px] font-bold tracking-widest transition-all duration-300 btn-hover">BUY</a>
+                            <h3 class="header-font text-[10px] uppercase">${p.name}</h3>
+                            <a href="${p.link}" target="_blank" class="px-5 py-2 border border-zinc-800 hover:border-white text-[10px] btn-hover">BUY</a>
                         </div>
                     </div>
                 `;
             });
-            renderPagination();
             ScrollReveal().reveal('.reveal', { distance: '20px', duration: 800, interval: 100 });
             attachCursorEvents();
         }
 
-        function renderPagination() {
-            const totalPages = Math.ceil(currentFiltered.length / itemsPerPage);
-            const container = document.getElementById('pagination');
-            container.innerHTML = '';
-            if (totalPages <= 1) return;
-            for (let i = 1; i <= totalPages; i++) { container.innerHTML += `<button onclick="goToPage(${i})" class="page-btn btn-hover ${i === currentPage ? 'active' : ''}">${i}</button>`; }
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<150; i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.4 });
         }
-
-        function goToPage(page) { currentPage = page; window.scrollTo({ top: 0, behavior: 'smooth' }); renderProducts(); }
-        function handleSearch() { const q = document.getElementById('search-bar').value.toUpperCase(); currentFiltered = products.filter(p => p.name.includes(q)); currentPage = 1; renderProducts(); }
-
-        const cursor = document.getElementById('cursor');
-        const border = document.getElementById('cursor-border');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-            border.style.left = e.clientX + 'px'; border.style.top = e.clientY + 'px';
-        });
-
-        function attachCursorEvents() {
-            document.querySelectorAll('.btn-hover, a, button, input, textarea').forEach(el => {
-                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-            });
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle = "#fff";
+            stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y > canvas.height) s.y = 0; });
+            requestAnimationFrame(drawStars);
         }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
+        
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
         renderProducts();
     </script>
 </body>
