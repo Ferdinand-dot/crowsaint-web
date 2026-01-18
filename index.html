@@ -423,45 +423,41 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-       function saveProfile() {
-            const newRank = document.getElementById('edit-rank').value;
-            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-            let index = users.findIndex(u => u.username === currentUser.username);
-            
-            if(index !== -1) {
-                // --- SISTEM KEAMANAN RANK ADMIN ---
-                if (newRank === "SHADOW GUARD") {
-                    const secretKey = prompt("ENTER SHADOW KEY TO ASCEND:");
-                    if (secretKey !== "admin123") {
-                        alert("ACCESS DENIED: YOU ARE NOT WORTHY OF THE SHADOWS.");
-                        return; // Berhenti, rank nggak bakal berubah
-                    }
-                }
-
-                // Update Gambar kalau ada yang dipilih
-                if(tempProfileImgUrl) { 
-                    users[index].pic = tempProfileImgUrl; 
-                }
-                
-                // Update Rank secara permanen
-                users[index].rank = newRank;
-                
-                // Simpan ke database lokal browser
-                localStorage.setItem('crowsaint_users', JSON.stringify(users));
-                
-                // Update status user yang lagi login sekarang
-                currentUser = users[index];
-                
-                // Reset form
-                tempProfileImgUrl = ""; 
-                document.getElementById('profile-file-display').innerText = "SELECT PROFILE IMAGE";
-                
-                // Refresh tampilan UI di sidebar
-                updateProfileUI(); 
-                closeAllModals(); 
-                alert("IDENTITY UPDATED: RANK ASCENDED.");
-            }
+    async function saveProfile() {
+    const newRank = document.getElementById('edit-rank').value;
+    
+    // 1. PROTEKSI RANK SUPERIOR
+    if (newRank === "SHADOW GUARD") {
+        const secretKey = prompt("ENTER SHADOW KEY TO ASCEND:");
+        if (secretKey !== "admin123") {
+            alert("ACCESS DENIED: NOT WORTHY.");
+            return;
         }
+    }
+
+    // 2. KIRIM UPDATE KE SUPABASE
+    const updateData = { rank: newRank };
+    if(tempProfileImgUrl) { updateData.pic = tempProfileImgUrl; }
+
+    const { data, error } = await supabaseClient
+        .from('leaderboard')
+        .update(updateData)
+        .eq('username', currentUser.username);
+
+    if (error) {
+        alert("UPDATE FAILED: " + error.message);
+    } else {
+        // 3. UPDATE SESI LOKAL
+        currentUser.rank = newRank;
+        if(tempProfileImgUrl) currentUser.pic = tempProfileImgUrl;
+        localStorage.setItem('crowsaint_session', JSON.stringify(currentUser));
+        
+        updateProfileUI(); 
+        closeAllModals(); 
+        alert("IDENTITY UPDATED IN THE CLOUD.");
+        location.reload(); // Refresh biar semua data sinkron
+    }
+}
 
         // --- FAVORITES SYSTEM ---
         function toggleFavorite(id) {
