@@ -25,10 +25,17 @@
         .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
         @keyframes crowFlap { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
 
-        /* PRELOADER & AUTH UI */
-        #preloader { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; margin-top: 20px; }
+        /* PRELOADER STYLING (UPDATED) */
+        #preloader { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+        .bg-logo-spin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120vw; opacity: 0.05; animation: slowSpin 60s linear infinite; pointer-events: none; }
+        @keyframes slowSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 50%); background-size: 100% 4px; pointer-events: none; z-index: 10; opacity: 0.3; }
+        .hud-text { position: absolute; font-size: 8px; color: #333; letter-spacing: 2px; text-transform: uppercase; }
+
+        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; margin-top: 20px; position: relative; z-index: 20; }
         .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 30px #fff; }
+        
+        /* AUTH UI */
         .auth-input { background: transparent; border: 1px solid #333; padding: 12px; width: 100%; color: white; font-size: 10px; outline: none; transition: 0.3s; margin-bottom: 10px; text-transform: uppercase; }
         .auth-input:focus { border-color: white; }
         .auth-link { color: #666; font-size: 9px; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
@@ -69,13 +76,20 @@
     <canvas id="starfield" class="fixed inset-0 z-[-1]"></canvas>
 
     <div id="preloader">
-        <div id="welcome-screen" class="flex flex-col items-center">
-            <div class="header-font text-[14px] tracking-[1.5em] mb-4 text-white">CROWSAINT</div>
+        <img src="logo.png" class="bg-logo-spin">
+        <div class="scanline"></div>
+        <div class="hud-text top-5 left-5">SYS.SECURE_CONNECTION</div>
+        <div class="hud-text top-5 right-5">ENCRYPTED</div>
+        <div class="hud-text bottom-5 left-5">V.6.0.2026</div>
+        <div class="hud-text bottom-5 right-5">ARCHIVE_READY</div>
+
+        <div id="welcome-screen" class="flex flex-col items-center relative z-20">
+            <div class="header-font text-[14px] tracking-[1.5em] mb-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">CROWSAINT</div>
             <div class="text-[8px] tracking-[0.5em] text-zinc-500 mb-8">THE HOLY FALLEN ARCHIVE</div>
             <button onclick="showLogin()" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
         </div>
         
-        <div id="login-screen" class="hidden w-72 text-center">
+        <div id="login-screen" class="hidden w-72 text-center relative z-20">
             <h3 class="header-font text-[10px] tracking-[0.5em] mb-8 text-white">IDENTIFY YOURSELF</h3>
             <input type="text" id="login-user" placeholder="USERNAME" class="auth-input">
             <input type="password" id="login-pass" placeholder="PASSWORD" class="auth-input">
@@ -83,7 +97,7 @@
             <span onclick="showRegister()" class="auth-link">NO IDENTITY? CREATE ACCOUNT</span>
         </div>
         
-        <div id="register-screen" class="hidden w-72 text-center">
+        <div id="register-screen" class="hidden w-72 text-center relative z-20">
             <h3 class="header-font text-[10px] tracking-[0.5em] mb-8 text-white">NEW IDENTITY</h3>
             <input type="text" id="reg-user" placeholder="USERNAME" class="auth-input">
             <input type="password" id="reg-pass" placeholder="PASSWORD" class="auth-input">
@@ -92,7 +106,7 @@
             <span onclick="showLogin()" class="auth-link">RETURN TO LOGIN</span>
         </div>
         
-        <div id="loading-status" class="hidden flex flex-col items-center mt-10">
+        <div id="loading-status" class="hidden flex flex-col items-center mt-10 relative z-20">
             <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4">AUTHENTICATED. DECRYPTING...</div>
             <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative"><div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300"></div></div>
             <div id="progress-percent" class="mt-4 text-[7px] text-zinc-500 font-mono">0%</div>
@@ -123,7 +137,10 @@
 
     <div id="profile-modal" class="owner-modal">
         <h3 class="header-font text-[10px] mb-6 tracking-widest text-center">EDIT IDENTITY</h3>
-        <input type="text" id="edit-pic" placeholder="PHOTO URL (IMGUR/DISCORD LINK)" class="auth-input">
+        <div class="file-wrapper" onclick="document.getElementById('profile-upload').click()">
+            <span id="profile-file-display">SELECT PROFILE IMAGE</span>
+            <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="handleProfileFileSelect(this)">
+        </div>
         <div class="text-[8px] text-zinc-500 mb-2 mt-4 uppercase">Select Rank:</div>
         <select id="edit-rank" class="auth-input bg-black">
             <option value="SAINT INITIATE">SAINT INITIATE</option>
@@ -231,8 +248,9 @@
         let localProducts = JSON.parse(localStorage.getItem('crowsaint_items')) || [];
         let favorites = JSON.parse(localStorage.getItem('crowsaint_favs')) || [];
         let tempImgUrl = "";
+        let tempProfileImgUrl = ""; 
         let currentUser = null;
-        let currentTab = 'home'; // Track active tab
+        let currentTab = 'home';
         
         const initialProducts = [
             { id: 1, name: "DARK ANGEL", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "1.jpg" },
@@ -292,7 +310,7 @@
         }
         function handleLogout() { if(confirm("TERMINATE SESSION?")) location.reload(); }
 
-        // --- PROFILE ---
+        // --- PROFILE SYSTEM ---
         function updateProfileUI() {
             if(!currentUser) return;
             document.getElementById('current-user-display').innerText = currentUser.username;
@@ -300,30 +318,39 @@
             document.getElementById('sidebar-pic').src = currentUser.pic;
         }
         function openProfileModal() { closeAllModals(); document.getElementById('profile-modal').classList.add('active'); document.getElementById('modal-overlay').classList.add('active'); }
+        
+        function handleProfileFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => { 
+                    tempProfileImgUrl = e.target.result; 
+                    document.getElementById('profile-file-display').innerText = "IMAGE SELECTED"; 
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         function saveProfile() {
-            const newPic = document.getElementById('edit-pic').value.trim();
             const newRank = document.getElementById('edit-rank').value;
             let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
             let index = users.findIndex(u => u.username === currentUser.username);
+            
             if(index !== -1) {
-                if(newPic) users[index].pic = newPic;
+                if(tempProfileImgUrl) { users[index].pic = tempProfileImgUrl; }
                 users[index].rank = newRank;
                 localStorage.setItem('crowsaint_users', JSON.stringify(users));
                 currentUser = users[index];
-                updateProfileUI(); closeAllModals(); alert("UPDATED.");
+                tempProfileImgUrl = ""; document.getElementById('profile-file-display').innerText = "SELECT PROFILE IMAGE";
+                updateProfileUI(); closeAllModals(); alert("IDENTITY UPDATED.");
             }
         }
 
         // --- FAVORITES SYSTEM ---
         function toggleFavorite(id) {
-            // Convert to string for consistent comparison if needed, but ID is usually number here
-            if(favorites.includes(id)) {
-                favorites = favorites.filter(fid => fid !== id); // Remove
-            } else {
-                favorites.push(id); // Add
-            }
+            if(favorites.includes(id)) { favorites = favorites.filter(fid => fid !== id); } 
+            else { favorites.push(id); }
             localStorage.setItem('crowsaint_favs', JSON.stringify(favorites));
-            renderProducts(); // Re-render to show changes
+            renderProducts();
         }
 
         // --- NAVIGATION & RENDER ---
@@ -340,7 +367,6 @@
             const search = document.getElementById('search-ui');
             const favHeader = document.getElementById('fav-header');
             
-            // Reset Active Class
             ['home-tab', 'shop-tab', 'fav-tab'].forEach(id => document.getElementById(id).classList.remove('active'));
 
             if(tab === 'home') {
@@ -348,12 +374,12 @@
                 document.getElementById('home-tab').classList.add('active');
             } else if (tab === 'shop') {
                 home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex';
-                favHeader.classList.add('hidden'); // Hide fav header
+                favHeader.classList.add('hidden'); 
                 document.getElementById('shop-tab').classList.add('active');
                 renderProducts();
             } else if (tab === 'favorites') {
                 home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex';
-                favHeader.classList.remove('hidden'); // Show fav header
+                favHeader.classList.remove('hidden'); 
                 document.getElementById('fav-tab').classList.add('active');
                 renderProducts();
             }
@@ -365,34 +391,22 @@
             const q = document.getElementById('search-bar').value.toUpperCase();
             
             let displayProducts = allProducts;
-
-            // Filter if in Favorites Tab
-            if(currentTab === 'favorites') {
-                displayProducts = allProducts.filter(p => favorites.includes(p.id));
-            }
-
-            // Always apply search filter
+            if(currentTab === 'favorites') { displayProducts = allProducts.filter(p => favorites.includes(p.id)); }
             displayProducts = displayProducts.filter(p => p.name.includes(q));
             
             const grid = document.getElementById('product-grid');
-            
-            if(displayProducts.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center text-zinc-600 text-[10px] mt-10">NO ARTIFACTS FOUND.</div>`;
-                return;
-            }
+            if(displayProducts.length === 0) { grid.innerHTML = `<div class="col-span-full text-center text-zinc-600 text-[10px] mt-10">NO ARTIFACTS FOUND.</div>`; return; }
 
             grid.innerHTML = displayProducts.map(p => {
                 const isFav = favorites.includes(p.id);
                 return `
                 <div class="card-glow reveal p-3 md:p-5 bg-black/40 backdrop-blur-sm relative">
                     ${p.isLocal ? `<div class="delete-badge" onclick="deleteProduct(${p.id})">DEL</div>` : ''}
-                    
                     <div class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${p.id})">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
                     </div>
-
                     <div class="aspect-square bg-zinc-950 mb-4 flex items-center justify-center overflow-hidden border border-zinc-900 group">
                         <img src="${p.img}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                     </div>
@@ -400,8 +414,7 @@
                         <h3 class="header-font text-[9px] uppercase truncate w-full text-zinc-300">${p.name}</h3>
                         <a href="${p.link}" target="_blank" class="w-full text-center py-1 border border-zinc-800 hover:bg-white hover:text-black hover:border-white text-[8px] btn-hover uppercase transition-colors">PURCHASE</a>
                     </div>
-                </div>
-            `}).join('');
+                </div>`}).join('');
             attachCursorEvents();
         }
 
