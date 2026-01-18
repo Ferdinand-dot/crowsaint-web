@@ -145,7 +145,7 @@
         <select id="edit-rank" class="auth-input bg-black">
             <option value="SAINT INITIATE">SAINT INITIATE</option>
             <option value="VOID WALKER">VOID WALKER</option>
-            <option value="SHADOW GUARD">SHADOW GUARD</option>
+            <option value="SHADOW GUARD">SHADOW GUARD</option>-
         </select>
         <button onclick="saveProfile()" class="enter-btn w-full mt-4 header-font btn-hover">UPDATE</button>
     </div>
@@ -202,6 +202,7 @@
                 
                 <div class="flex gap-2 mt-6">
                     <button onclick="toggleAudio()" id="audio-btn" class="text-[9px] text-zinc-400 hover:text-white uppercase flex-1 border border-zinc-800 py-1 btn-hover">MUTE</button>
+                    <button onclick="showLoginHistory()" class="text-[9px] text-zinc-400 hover:text-white uppercase w-full border border-zinc-800 py-1 mb-2 btn-hover">LOGIN HISTORY</button>
                     <button onclick="handleLogout()" class="text-[9px] text-red-800 hover:text-red-500 uppercase flex-1 border border-red-900/30 py-1 btn-hover">LOGOUT</button>
                 </div>
             </div>
@@ -309,7 +310,19 @@
                 }
             }, 80);
         }
-        function handleLogout() { if(confirm("TERMINATE SESSION?")) location.reload(); }
+        function handleLogin() {
+        const user = document.getElementById('login-user').value.toUpperCase().trim();
+        const pass = document.getElementById('login-pass').value;
+        let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
+        const foundUser = users.find(u => u.username === user && u.password === pass);
+        if(foundUser) { 
+            currentUser = foundUser; 
+            saveLoginLog(user); // <--- TAMBAHKAN BARIS INI
+            updateProfileUI(); 
+            startLoading(); 
+        } 
+        else { alert("ACCESS DENIED."); }
+        }
 
         // --- PROFILE SYSTEM ---
         function updateProfileUI() {
@@ -331,18 +344,43 @@
             }
         }
 
-        function saveProfile() {
+       function saveProfile() {
             const newRank = document.getElementById('edit-rank').value;
             let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
             let index = users.findIndex(u => u.username === currentUser.username);
             
             if(index !== -1) {
-                if(tempProfileImgUrl) { users[index].pic = tempProfileImgUrl; }
+                // --- SISTEM KEAMANAN RANK ADMIN ---
+                if (newRank === "SHADOW GUARD") {
+                    const secretKey = prompt("ENTER SHADOW KEY TO ASCEND:");
+                    if (secretKey !== "admin123") {
+                        alert("ACCESS DENIED: YOU ARE NOT WORTHY OF THE SHADOWS.");
+                        return; // Berhenti, rank nggak bakal berubah
+                    }
+                }
+
+                // Update Gambar kalau ada yang dipilih
+                if(tempProfileImgUrl) { 
+                    users[index].pic = tempProfileImgUrl; 
+                }
+                
+                // Update Rank secara permanen
                 users[index].rank = newRank;
+                
+                // Simpan ke database lokal browser
                 localStorage.setItem('crowsaint_users', JSON.stringify(users));
+                
+                // Update status user yang lagi login sekarang
                 currentUser = users[index];
-                tempProfileImgUrl = ""; document.getElementById('profile-file-display').innerText = "SELECT PROFILE IMAGE";
-                updateProfileUI(); closeAllModals(); alert("IDENTITY UPDATED.");
+                
+                // Reset form
+                tempProfileImgUrl = ""; 
+                document.getElementById('profile-file-display').innerText = "SELECT PROFILE IMAGE";
+                
+                // Refresh tampilan UI di sidebar
+                updateProfileUI(); 
+                closeAllModals(); 
+                alert("IDENTITY UPDATED: RANK ASCENDED.");
             }
         }
 
@@ -449,7 +487,29 @@
         function draw() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.s,0,7);ctx.fill();s.y+=0.2;if(s.y>canvas.height)s.y=0}); requestAnimationFrame(draw); }
         window.onresize=initStars; initStars(); draw(); setInterval(()=>{const n=new Date(); document.getElementById('digital-clock').innerText=n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0')+":"+n.getSeconds().toString().padStart(2,'0')},1000);
         renderProducts(); ScrollReveal().reveal('.reveal',{distance:'20px',duration:800});
-    </script>
+        // MESIN PENCATAT LOGIN
+        function saveLoginLog(username) {
+            let logs = JSON.parse(localStorage.getItem('crowsaint_login_logs')) || [];
+            const newLog = {
+                user: username,
+                time: new Date().toLocaleString('id-ID')
+            };
+            logs.unshift(newLog); // Simpan yang terbaru di paling atas
+            if(logs.length > 10) logs.pop(); // Simpan 10 riwayat terakhir aja biar gak penuh
+            localStorage.setItem('crowsaint_login_logs', JSON.stringify(logs));
+        }
+
+        // FUNGSI MENAMPILKAN RIWAYAT
+        function showLoginHistory() {
+            let logs = JSON.parse(localStorage.getItem('crowsaint_login_logs')) || [];
+            if(logs.length === 0) return alert("NO LOGIN HISTORY FOUND.");
+            
+            let logString = "--- CROWSAINT LOGIN HISTORY ---\n\n";
+            logs.forEach((log, i) => {
+                logString += `${i+1}. ${log.user} | ${log.time}\n`;
+            });
+            alert(logString);
+        }
+    </script>jk
 </body>
 </html>
-
