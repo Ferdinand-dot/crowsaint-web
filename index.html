@@ -140,7 +140,7 @@
 
         // START SYSTEM
         document.getElementById('btn-start').addEventListener('click', () => {
-            audio.volume = 0.4;
+            audio.volume = 1.0;
             audio.play().catch(e => console.log("Audio Error"));
             document.getElementById('pre-content').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
@@ -255,3 +255,4 @@
     </script>
 </body>
 </html>
+
