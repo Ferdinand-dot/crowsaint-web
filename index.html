@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CROWSAINT | OFFICIAL ARCHIVE</title>
+    <title>CROWSAINT | THE ARCHIVE</title>
     
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,47 +12,54 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Space+Mono&display=swap');
         
-        /* FIX CURSOR: HILANG DI HP (TOUCH DEVICES) */
+        /* CURSOR SYSTEM - CROW VERSION */
+        * { cursor: none !important; }
         @media (pointer: coarse) {
             #cursor, #cursor-border { display: none !important; }
             * { cursor: auto !important; }
         }
+        #cursor {
+            position: fixed; z-index: 999999; pointer-events: none; mix-blend-mode: difference; 
+            transition: transform 0.1s ease-out; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center;
+        }
+        #cursor svg { width: 35px; height: auto; fill: white; animation: crowFlap 0.8s ease-in-out infinite alternate; transition: all 0.3s ease; }
+        @keyframes crowFlap { 0% { transform: translateY(0) scaleY(1); } 100% { transform: translateY(-5px) scaleY(0.85); } }
+        #cursor-border { position: fixed; width: 50px; height: 50px; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.2s ease-out; }
+        .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 15px #fff); }
 
-        * { cursor: none !important; }
-        #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 999999; mix-blend-mode: difference; transition: transform 0.2s; }
-        #cursor-border { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; pointer-events: none; z-index: 999998; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: all 0.1s ease-out; }
-        .cursor-hover #cursor { transform: scale(4); background: #fff; box-shadow: 0 0 20px #fff; }
-
+        /* GENERAL STYLE */
         body { background-color: #000; color: #fff; font-family: 'Space Mono', monospace; overflow-x: hidden; scroll-behavior: smooth; }
         .header-font { font-family: 'Syncopate', sans-serif; }
         
         /* SCANLINES */
         body::before {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
                         linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
             z-index: 9999; background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
 
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
+        /* PRELOADER STYLE */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; 
             z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.5s ease;
         }
-
-        .nav-item { position: fixed; z-index: 90000; pointer-events: auto; }
-        .search-container { top: 40px; right: 40px; display: flex; align-items: center; }
-        .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; padding: 5px; color: #fff; font-size: 10px; transition: all 0.5s; letter-spacing: 2px; }
-        .search-container:hover .search-input, .search-input:focus { width: 120px; opacity: 1; margin-right: 10px; }
-
-        .enter-btn { padding: 20px 40px; border: 1px solid #fff; font-size: 12px; letter-spacing: 5px; transition: all 0.5s; position: relative; z-index: 100005; background: black; color: white; }
+        .enter-btn { padding: 18px 36px; border: 1px solid #fff; font-size: 11px; letter-spacing: 5px; transition: all 0.5s; background: black; color: white; position: relative; }
         .enter-btn:hover { background: #fff; color: #000; box-shadow: 0 0 40px #fff; }
 
-        #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fff; box-shadow: 0 0 10px #fff; }
 
-        /* PRODUCT CARD FIX */
-        .card-glow:hover { box-shadow: 0 0 20px rgba(255,255,255,0.2); border-color: #fff; }
+        /* NAV & SIDEBAR */
+        .nav-item { position: fixed; z-index: 90000; pointer-events: auto; }
+        .search-input { width: 0; opacity: 0; background: transparent; border-bottom: 1px solid #fff; padding: 5px; color: #fff; font-size: 10px; transition: all 0.5s; letter-spacing: 2px; }
+        .search-container:hover .search-input, .search-input:focus { width: 120px; opacity: 1; margin-right: 10px; }
+        #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
     </style>
 </head>
 <body>
@@ -61,18 +68,31 @@
 
     <div id="preloader">
         <div id="pre-content" class="flex flex-col items-center">
-            <div class="header-font text-[10px] tracking-[1.2em] mb-12 animate-pulse text-white">CROWSAINT</div>
-            <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
-        </div>
-        <div id="loading-status" class="hidden flex flex-col items-center mt-10">
-            <div class="text-[8px] tracking-[0.5em] text-zinc-400 uppercase italic animate-pulse" id="loader-text">Injecting Audio Assets...</div>
-            <div class="w-48 h-[1px] bg-zinc-900 mt-6 overflow-hidden">
-                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-1000"></div>
+            <div class="header-font text-[10px] md:text-[14px] tracking-[1.5em] mb-4 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">CROWSAINT</div>
+            <div class="text-[7px] font-mono text-zinc-500 mb-12 tracking-[0.3em] uppercase italic">[ Connection Encrypted: Secure ]</div>
+            
+            <div class="relative group">
+                <div class="absolute -inset-6 border border-white/5 rounded-full animate-pulse opacity-20"></div>
+                <button id="btn-start" class="enter-btn header-font btn-hover">ENTER ARCHIVE</button>
             </div>
+            
+            <p class="mt-12 text-[7px] text-zinc-700 tracking-[0.8em] uppercase italic">Initializing System 2.0.2.6</p>
+        </div>
+
+        <div id="loading-status" class="hidden flex flex-col items-center mt-10">
+            <div class="text-[8px] tracking-[0.5em] text-white uppercase mb-4" id="loader-text">DECRYPTING ARCHIVE...</div>
+            <div class="w-64 h-[1px] bg-zinc-900 overflow-hidden relative">
+                <div id="progress-bar" class="w-0 h-full bg-white transition-all duration-300 shadow-[0_0_10px_#fff]"></div>
+            </div>
+            <div class="mt-4 text-[7px] text-zinc-500 font-mono" id="progress-percent">0%</div>
         </div>
     </div>
 
-    <div id="cursor"></div>
+    <div id="cursor">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.6 3c-1 .5-2.2 1-3.3 1.2 1.2-.8 2-2 2.5-3.5-1 .8-2.3 1.4-3.7 1.7C18 1.3 16.5 0 14.7 0c-3.3 0-6 2.7-6 6v1.5C5 7 2 4.5.5 1.5 0 2.2-.3 3-.3 4 1 6.5 2.5 8 5 9c-1-.2-2-.5-2.8-1-.2 2 1.3 4 3.5 5-1 .2-1.8.3-2.8.2.8 2 3 3.3 5.5 3.3-2.2 1.8-5 2.8-8 2.8H0c2.8 1.8 6.2 2.8 9.8 2.8 11.8 0 18.3-9.8 18.3-18.3 0-.3 0-.5-.2-.8 1.3-1 2.3-2.2 3.2-3.5z"/>
+        </svg>
+    </div>
     <div id="cursor-border"></div>
 
     <button onclick="toggleSidebar()" class="nav-item top-10 left-10 group bg-black/40 p-3 backdrop-blur-md border border-white/10 btn-hover">
@@ -81,14 +101,14 @@
         <div class="w-4 h-0.5 bg-white transition-all group-hover:w-10"></div>
     </button>
 
-    <div class="nav-item search-container btn-hover bg-black/40 p-3 backdrop-blur-md border border-white/10">
+    <div class="nav-item search-container top-10 right-10 btn-hover bg-black/40 p-3 backdrop-blur-md border border-white/10 flex items-center">
         <input type="text" id="search-bar" onkeyup="handleSearch()" placeholder="SEARCH..." class="search-input uppercase outline-none">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </div>
 
     <div id="sidebar" class="fixed top-0 left-0 h-full w-full md:w-80 bg-zinc-950 transform -translate-x-full border-r border-zinc-900 p-12 flex flex-col justify-center">
         <div class="absolute top-10 left-10 right-10 flex justify-between items-center">
-            <span class="header-font text-[8px] tracking-[0.5em] text-white">ARCHIVE</span>
+            <span class="header-font text-[8px] text-white tracking-widest">ARCHIVE_ACCESS</span>
             <button onclick="toggleSidebar()" class="text-zinc-500 hover:text-white uppercase text-[10px] btn-hover">Close</button>
         </div>
         <div class="space-y-8">
@@ -98,20 +118,24 @@
         </div>
     </div>
 
-    <header class="relative text-center mb-20 flex flex-col items-center justify-center pt-60 px-6">
-        <h1 class="header-font text-4xl md:text-8xl tracking-tighter mb-4 glitch">CROWSAINT</h1>
+    <header class="relative text-center mb-20 flex flex-col items-center justify-center pt-60 px-6 reveal">
+        <h1 class="header-font text-4xl md:text-8xl tracking-tighter mb-4">CROWSAINT</h1>
         <p class="text-zinc-600 text-[8px] md:text-[10px] tracking-[0.5em] uppercase italic">"Don't follow the crowd, lead the saint"</p>
     </header>
 
-    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12 px-4 md:px-20"></div>
+    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-12 px-4 md:px-20 mb-32"></div>
+
+    <div class="fixed bottom-5 left-5 text-[7px] md:text-[9px] text-zinc-500 font-mono tracking-widest uppercase z-[90000] hidden md:block">
+        <div>User: ARCHIVE_ADMIN</div>
+        <div id="digital-clock">00:00:00:00</div>
+        <div class="text-white/40">Status: System Operational</div>
+    </div>
 
     <footer class="mt-20 text-center border-t border-zinc-900 pt-20 pb-10">
         <p class="text-[8px] text-zinc-800 tracking-[1em] uppercase">CROWSAINT CLAN ARCHIVE 2026</p>
     </footer>
 
-    <audio id="bg-music" loop>
-        <source src="horror.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bg-music" loop preload="auto"><source src="horror.mp3" type="audio/mpeg"></audio>
 
     <script>
         const audio = document.getElementById('bg-music');
@@ -129,29 +153,35 @@
 
         let filteredProducts = [...products];
 
+        // START SYSTEM
         document.getElementById('btn-start').addEventListener('click', () => {
             audio.volume = 0.4;
-            audio.play().catch(e => console.log("Upload horror.mp3 woi!"));
+            audio.play().catch(e => console.log("Audio Error"));
+
             document.getElementById('pre-content').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
+            
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 5;
+                progress += Math.floor(Math.random() * 8) + 1;
+                if (progress > 100) progress = 100;
                 document.getElementById('progress-bar').style.width = progress + '%';
+                document.getElementById('progress-percent').innerText = progress + '%';
+                
                 if(progress >= 100) {
                     clearInterval(interval);
                     document.getElementById('preloader').style.opacity = '0';
                     setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 1000);
                 }
-            }, 50);
+            }, 100);
         });
 
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = filteredProducts.map(p => `
-                <div class="card-glow reveal border border-zinc-900 p-3 md:p-6 bg-black/40 backdrop-blur-sm transition-all">
-                    <div class="aspect-square bg-zinc-950 overflow-hidden mb-4 border border-zinc-900 flex items-center justify-center">
-                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain hover:scale-105 transition duration-500">
+                <div class="card-glow reveal border border-zinc-900 p-3 md:p-6 bg-black/40 backdrop-blur-sm transition-all duration-500">
+                    <div class="aspect-square bg-zinc-950 mb-4 border border-zinc-900 flex items-center justify-center overflow-hidden">
+                        <img src="${p.img}" alt="${p.name}" class="w-full h-full object-contain hover:scale-110 transition duration-700">
                     </div>
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                         <h3 class="header-font text-[7px] md:text-[10px] uppercase truncate w-full">${p.name}</h3>
@@ -164,11 +194,22 @@
 
         function handleSearch() {
             const q = document.getElementById('search-bar').value.toUpperCase();
-            filteredProducts = products.filter(p => p.name.includes(q));
-            renderProducts();
+            filteredProducts = products.filter(p => p.name.includes(q)); renderProducts();
         }
 
-        // CURSOR LOGIC
+        // CLOCK
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const ms = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
+            const clockEl = document.getElementById('digital-clock');
+            if(clockEl) clockEl.innerText = `${h}:${m}:${s}:${ms}`;
+        }
+        setInterval(updateClock, 10);
+
+        // CURSOR
         const cursor = document.getElementById('cursor');
         const border = document.getElementById('cursor-border');
         document.addEventListener('mousemove', (e) => {
@@ -183,13 +224,13 @@
             });
         }
 
-        // STARFIELD
+        // BACKGROUND
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         let stars = [];
         function initStars() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = Array.from({length: 100}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.3 }));
+            stars = Array.from({length: 80}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.2 }));
         }
         function drawStars() {
             ctx.clearRect(0,0,canvas.width, canvas.height); ctx.fillStyle = "#fff";
@@ -199,6 +240,7 @@
         window.addEventListener('resize', initStars); initStars(); drawStars();
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
         renderProducts();
+        ScrollReveal().reveal('.reveal', { distance: '20px', duration: 800, interval: 100 });
     </script>
 </body>
 </html>
