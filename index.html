@@ -282,18 +282,29 @@
             if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio permission needed")); }
         }
         function showRegister() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('register-screen').classList.remove('hidden'); }
-        function handleRegister() {
-            const user = document.getElementById('reg-user').value.toUpperCase().trim();
-            const pass = document.getElementById('reg-pass').value;
-            const conf = document.getElementById('reg-pass-conf').value;
-            if(!user || !pass || !conf) return alert("ERROR: ALL FIELDS REQUIRED.");
-            if(pass !== conf) return alert("ERROR: PASSWORD MISMATCH.");
-            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-            if(users.some(u => u.username === user)) return alert("ACCESS DENIED: IDENTITY ALREADY EXISTS.");
-            users.push({ username: user, password: pass, pic: "https://via.placeholder.com/150/333333/FFFFFF?text=CS", rank: "SAINT INITIATE" });
-            localStorage.setItem('crowsaint_users', JSON.stringify(users));
-            alert("IDENTITY ESTABLISHED."); showLogin();
-        }
+            async function handleRegister() {
+        const user = document.getElementById('reg-user').value.toUpperCase().trim();
+        const pass = document.getElementById('reg-pass').value;
+        const conf = document.getElementById('reg-pass-conf').value;
+
+        if(!user || !pass || !conf) return alert("EMPTY FIELDS.");
+        if(pass !== conf) return alert("PASSWORD MISMATCH.");
+
+        // Kirim data ke tabel 'users' di Supabase
+        const { error } = await supabaseClient
+            .from('leaderboard') // Kita pake tabel yang sama tapi tambahin kolom password
+            .upsert({ 
+                username: user, 
+                password: pass, // PASTIIN DI SUPABASE SUDAH ADA KOLOM 'password' (Type: text)
+                pic: "logo.png",
+                rank: "SAINT INITIATE",
+                points: 0
+            });
+
+    if (error) return alert("REGISTER FAILED: " + error.message);
+    alert("IDENTITY ESTABLISHED IN THE CLOUD.");
+    showLogin();
+}
         function handleLogin() {
             const user = document.getElementById('login-user').value.toUpperCase().trim();
             const pass = document.getElementById('login-pass').value;
@@ -324,19 +335,29 @@
                 }
             }, 80);
         }
-        function handleLogin() {
-        const user = document.getElementById('login-user').value.toUpperCase().trim();
-        const pass = document.getElementById('login-pass').value;
-        let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-        const foundUser = users.find(u => u.username === user && u.password === pass);
-        if(foundUser) { 
-            currentUser = foundUser; 
-            saveLoginLog(user); // <--- TAMBAHKAN BARIS INI
-            updateProfileUI(); 
-            startLoading(); 
-        } 
-        else { alert("ACCESS DENIED."); }
-        }
+        async function handleRegister() {
+    const user = document.getElementById('reg-user').value.toUpperCase().trim();
+    const pass = document.getElementById('reg-pass').value;
+    const conf = document.getElementById('reg-pass-conf').value;
+
+    if(!user || !pass || !conf) return alert("EMPTY FIELDS.");
+    if(pass !== conf) return alert("PASSWORD MISMATCH.");
+
+    // Kirim data ke tabel 'users' di Supabase
+    const { error } = await supabaseClient
+        .from('leaderboard') // Kita pake tabel yang sama tapi tambahin kolom password
+        .upsert({ 
+            username: user, 
+            password: pass, // PASTIIN DI SUPABASE SUDAH ADA KOLOM 'password' (Type: text)
+            pic: "logo.png",
+            rank: "SAINT INITIATE",
+            points: 0
+        });
+
+    if (error) return alert("REGISTER FAILED: " + error.message);
+    alert("IDENTITY ESTABLISHED IN THE CLOUD.");
+    showLogin();
+}
 
         // --- PROFILE SYSTEM ---
         function updateProfileUI() {
