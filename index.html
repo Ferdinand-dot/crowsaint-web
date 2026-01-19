@@ -585,58 +585,50 @@ window.addEventListener('DOMContentLoaded', () => {
             });
             alert(logString);
         }
-        async function showLeaderboard() {
-            closeAllModals();
-            const modal = document.getElementById('leaderboard-modal');
-            const content = document.getElementById('leaderboard-content');
-            content.innerHTML = `<div class="text-[8px] text-center py-10 animate-pulse">DECRYPTING GLOBAL ARCHIVE...</div>`;
-            modal.classList.add('active');
-            document.getElementById('modal-overlay').classList.add('active');
+       // GANTI ISI FUNGSI LO PAKE INI, JANGAN ADA YANG TERSISA DARI KODE LAMA
+async function showLeaderboard() {
+    closeAllModals();
+    const modal = document.getElementById('leaderboard-modal');
+    const content = document.getElementById('leaderboard-content');
+    
+    content.innerHTML = `<div class="text-[8px] text-center py-10 animate-pulse text-zinc-500">DECRYPTING GLOBAL ARCHIVE...</div>`;
+    modal.classList.add('active');
+    document.getElementById('modal-overlay').classList.add('active');
 
-            try {
-                // Tarik 10 besar dari Supabase
-                const { data: users, error } = await supabaseClient
-                    .from('leaderboard')
-                    .select('*')
-                    .order('points', { ascending: false })
-                    .limit(10);
+    try {
+        const { data: users, error } = await supabaseClient
+            .from('leaderboard')
+            .select('*')
+            .order('points', { ascending: false })
+            .limit(10);
 
-                if (error) throw error;
+        if (error) throw error;
 
-                let html = `<div class="mb-4">
-                                <p class="text-[7px] text-zinc-500 mb-2 uppercase tracking-[0.3em]">-- Archive Owner --</p>
-                                <div class="flex items-center gap-3 bg-white/5 p-2 border border-white/20">
-                                    <img src="logo.png" class="w-8 h-8 rounded-full border border-white/50 object-cover">
-                                    <div>
-                                        <p class="text-[10px] font-bold text-white uppercase">FERDI [OWNER]</p>
-                                        <p class="text-[7px] text-zinc-500 uppercase">THE VOID GUARDIAN</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-[7px] text-zinc-500 mb-2 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
-
-                users.forEach((u, i) => {
-                    html += `
-                    <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] ${i < 3 ? 'text-white font-bold' : 'text-zinc-600'}">#${i + 1}</span>
-                            <img src="${u.pic}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover" onerror="this.src='logo.png'">
-                            <div>
-                                <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
-                                <p class="text-[7px] text-zinc-500 uppercase">${u.rank}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[10px] font-mono text-white">${u.points}</p>
-                            <p class="text-[6px] text-zinc-600 uppercase">PTS</p>
-                        </div>
-                    </div>`;
-                });
-                content.innerHTML = html;
-            } catch (e) {
-                content.innerHTML = `<div class="text-red-500 text-[8px] text-center">FAILED TO LOAD GLOBAL DATA.</div>`;
-            }
-        }
+        // INI BAGIAN YANG TADI LO BINGUNGIN, SEKARANG SUDAH BERSIH:
+        let html = `<p class="text-[7px] text-zinc-500 mb-4 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
+        
+        users.forEach((u, i) => {
+            html += `
+            <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] ${i < 3 ? 'text-white font-bold' : 'text-zinc-600'}">#${i + 1}</span>
+                    <img src="${u.pic || 'logo.png'}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover" onerror="this.src='logo.png'">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
+                        <p class="text-[7px] text-zinc-500 uppercase">${u.rank || 'INITIATE'}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-mono text-white">${u.points || 0}</p>
+                    <p class="text-[6px] text-zinc-600 uppercase">PTS</p>
+                </div>
+            </div>`;
+        });
+        content.innerHTML = html;
+    } catch (e) {
+        content.innerHTML = `<div class="text-red-500 text-[8px] text-center py-10 uppercase">ENCRYPTION ERROR</div>`;
+    }
+}
         window.onload = () => {
     const session = localStorage.getItem('crowsaint_session');
     if (session) {
@@ -652,4 +644,3 @@ window.addEventListener('DOMContentLoaded', () => {
     </script>jk
 </body>
 </html>
-
