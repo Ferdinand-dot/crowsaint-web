@@ -559,7 +559,7 @@
             alert(logString);
         }
 
-     // GANTI FUNCTION showLeaderboard YANG LAMA:
+     // GANTI FUNCTION showLeaderboard JADI VERSI BUCIN 4 TINGKAT:
 async function showLeaderboard() {
     closeAllModals();
     const modal = document.getElementById('leaderboard-modal');
@@ -576,35 +576,34 @@ async function showLeaderboard() {
 
         if (error) throw error;
 
-        // --- LOGIKA BARU (ANTI-TYPO FERDINAND) ---
+        // --- HIERARKI 4 TINGKAT ---
         
-        // 1. CARI OWNER (Pokoknya yang ada tulisan "OWNER", TAPI BUKAN "PACAR")
-        // Ini bakal nangkep 'ARCHIVE OWNER', 'ARDHIVE OWNER', atau typo lainnya.
+        // 1. OWNER (Cari yang rank-nya mengandung 'OWNER' tapi BUKAN 'PACAR')
         const ownerData = allUsers.find(u => 
-            u.rank && 
-            u.rank.toUpperCase().includes('OWNER') && 
-            !u.rank.toUpperCase().includes('PACAR')
+            u.rank && u.rank.toUpperCase().includes('OWNER') && !u.rank.toUpperCase().includes('PACAR')
         );
         
-        // 2. CARI ADMIN (Shadow Guard / Admin / Pacar Owner)
+        // 2. QUEEN/PACAR (Cari yang rank-nya mengandung 'PACAR')
+        // Ini Tahta Spesial buat Miwaa<3
+        const queenData = allUsers.find(u => u.rank && u.rank.toUpperCase().includes('PACAR'));
+
+        // 3. ADMIN (Shadow Guard / Admin) - EXCLUDE Owner & Queen
         const admins = allUsers.filter(u => 
-            u.username !== (ownerData ? ownerData.username : '') && // Jangan masukin Owner lagi
-            (
-                (u.rank && u.rank.toUpperCase().includes('ADMIN')) || 
-                (u.rank && u.rank.toUpperCase().includes('SHADOW')) ||
-                (u.rank && u.rank.toUpperCase().includes('PACAR')) // Miwaa<3 masuk sini
-            )
+            (u.rank && (u.rank.toUpperCase().includes('ADMIN') || u.rank.toUpperCase().includes('SHADOW'))) &&
+            u.username !== (ownerData ? ownerData.username : '') &&
+            u.username !== (queenData ? queenData.username : '')
         );
 
-        // 3. CARI VISITOR (Sisanya)
+        // 4. VISITORS (Sisanya)
         const visitors = allUsers.filter(u => 
             u.username !== (ownerData ? ownerData.username : '') && 
+            u.username !== (queenData ? queenData.username : '') &&
             !admins.some(a => a.username === u.username)
         ).slice(0, 10);
 
         let html = "";
 
-        // --- RENDER TAHTA OWNER ---
+        // --- LEVEL 1: OWNER (PUTIH) ---
         if (ownerData) {
             html += `
             <p class="text-[7px] text-zinc-400 mb-2 uppercase tracking-[0.3em] font-bold">-- System Authority --</p>
@@ -619,56 +618,67 @@ async function showLeaderboard() {
                 </div>
                 <div class="text-right relative z-10">
                     <p class="text-[12px] font-mono text-white font-bold">${ownerData.points || 0}</p>
-                    <p class="text-[6px] text-zinc-500 uppercase">MASTER POINTS</p>
                 </div>
             </div>`;
-        } else {
-            html += `<div class="text-[8px] text-center text-zinc-800 italic mb-6 border border-zinc-900 p-2">ARCHIVE OWNER NOT DETECTED</div>`;
         }
 
-        // --- RENDER KURSI ADMIN (Miwaa<3 bakal merah) ---
+        // --- LEVEL 2: QUEEN / PACAR (PINK MERONA) ---
+        if (queenData) {
+            html += `
+            <p class="text-[7px] text-pink-500 mb-2 uppercase tracking-[0.3em] font-bold">-- The Queen --</p>
+            <div class="flex items-center justify-between bg-pink-950/30 p-2 border-l-2 border-pink-500 mb-6 relative overflow-hidden">
+                <div class="flex items-center gap-3 relative z-10">
+                    <img src="${queenData.pic || 'logo.png'}" class="w-10 h-10 rounded-full border border-pink-400 object-cover shadow-[0_0_10px_rgba(236,72,153,0.5)]" onerror="this.src='logo.png'">
+                    <div>
+                        <p class="text-[10px] uppercase font-black text-pink-100 tracking-widest">${queenData.username} 💖</p>
+                        <p class="text-[6px] text-pink-400 uppercase font-bold tracking-widest">PACAR OWNER</p>
+                    </div>
+                </div>
+                <div class="text-right relative z-10">
+                    <p class="text-[10px] font-mono text-pink-200">${queenData.points || 0}</p>
+                </div>
+            </div>`;
+        }
+
+        // --- LEVEL 3: ADMIN (MERAH) ---
         if (admins.length > 0) {
             html += `<p class="text-[7px] text-red-600 mb-3 uppercase tracking-[0.3em] font-bold">-- Shadow Guards --</p>`;
             admins.forEach(adm => {
                 html += `
-                <div class="flex items-center justify-between bg-gradient-to-r from-red-950/40 to-black p-2 border-l-2 border-red-600 mb-3 hover:bg-red-900/20 transition-all">
+                <div class="flex items-center justify-between bg-red-950/20 p-2 border-l-2 border-red-800 mb-2">
                     <div class="flex items-center gap-3">
-                        <img src="${adm.pic || 'logo.png'}" class="w-9 h-9 rounded-full border border-red-500/50 object-cover" onerror="this.src='logo.png'">
+                        <img src="${adm.pic || 'logo.png'}" class="w-8 h-8 rounded-full border border-red-900 object-cover" onerror="this.src='logo.png'">
                         <div>
-                            <p class="text-[10px] uppercase font-bold text-red-100">${adm.username}</p>
-                            <p class="text-[6px] text-red-500 uppercase tracking-wider">${adm.rank}</p>
+                            <p class="text-[9px] uppercase font-bold text-red-200">${adm.username}</p>
+                            <p class="text-[6px] text-red-600 uppercase">SHADOW GUARD</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] font-mono text-red-200">${adm.points || 0}</p>
+                        <p class="text-[9px] font-mono text-red-300">${adm.points || 0}</p>
                     </div>
                 </div>`;
             });
         }
 
-        // --- RENDER GLOBAL VISITORS ---
-        html += `<p class="text-[7px] text-zinc-600 mb-3 uppercase tracking-[0.3em] mt-6">-- Global Visitors --</p>`;
+        // --- LEVEL 4: VISITORS (ABU-ABU) ---
+        html += `<p class="text-[7px] text-zinc-600 mb-3 uppercase tracking-[0.3em] mt-4">-- Global Visitors --</p>`;
         
-        if (visitors.length === 0) {
-            html += `<div class="text-[8px] text-center text-zinc-800 italic">NO SIGNALS DETECTED.</div>`;
-        } else {
-            visitors.forEach((u, i) => {
-                html += `
-                <div class="flex items-center justify-between bg-zinc-900/30 p-2 border-b border-zinc-800 mb-1 hover:bg-zinc-800 transition-colors">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[9px] text-zinc-700 font-mono w-4">#${i + 1}</span>
-                        <img src="${u.pic || 'logo.png'}" class="w-7 h-7 rounded-full border border-zinc-800 object-cover grayscale opacity-60" onerror="this.src='logo.png'">
-                        <div>
-                            <p class="text-[9px] uppercase font-bold text-zinc-400">${u.username}</p>
-                            <p class="text-[6px] text-zinc-600 uppercase">${u.rank || 'INITIATE'}</p>
-                        </div>
+        visitors.forEach((u, i) => {
+            html += `
+            <div class="flex items-center justify-between bg-zinc-900/30 p-2 border-b border-zinc-800 mb-1">
+                <div class="flex items-center gap-3">
+                    <span class="text-[9px] text-zinc-700 font-mono w-4">#${i + 1}</span>
+                    <img src="${u.pic || 'logo.png'}" class="w-7 h-7 rounded-full border border-zinc-800 object-cover grayscale opacity-60" onerror="this.src='logo.png'">
+                    <div>
+                        <p class="text-[9px] uppercase font-bold text-zinc-400">${u.username}</p>
+                        <p class="text-[6px] text-zinc-600 uppercase">VISITOR</p>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[9px] font-mono text-zinc-500">${u.points || 0}</p>
-                    </div>
-                </div>`;
-            });
-        }
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-mono text-zinc-500">${u.points || 0}</p>
+                </div>
+            </div>`;
+        });
         
         content.innerHTML = html;
     } catch (e) {
