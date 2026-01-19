@@ -559,12 +559,12 @@
             alert(logString);
         }
 
-        // GANTI FUNCTION showLeaderboard YANG LAMA DENGAN INI:
+     // GANTI FUNCTION showLeaderboard YANG LAMA:
 async function showLeaderboard() {
     closeAllModals();
     const modal = document.getElementById('leaderboard-modal');
     const content = document.getElementById('leaderboard-content');
-    content.innerHTML = `<div class="text-[8px] text-center py-10 animate-pulse text-zinc-500">DECRYPTING GLOBAL ARCHIVE...</div>`;
+    content.innerHTML = `<div class="text-[8px] text-center py-10 animate-pulse text-zinc-500">DECRYPTING HIERARCHY...</div>`;
     modal.classList.add('active');
     document.getElementById('modal-overlay').classList.add('active');
 
@@ -576,27 +576,35 @@ async function showLeaderboard() {
 
         if (error) throw error;
 
-        // 1. FILTER KASTA (HIERARKI)
-        // Kasta Tertinggi: Owner (Username FERDI atau Rank ARCHIVE OWNER)
-        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER' || u.username === 'FERDI' || u.username === 'FERDINAND');
+        // --- LOGIKA BARU (ANTI-TYPO FERDINAND) ---
         
-        // Kasta Kedua: Admin (Rank SHADOW GUARD)
-        // Kita filter yang rank-nya SHADOW GUARD tapi BUKAN si Owner tadi
+        // 1. CARI OWNER (Pokoknya yang ada tulisan "OWNER", TAPI BUKAN "PACAR")
+        // Ini bakal nangkep 'ARCHIVE OWNER', 'ARDHIVE OWNER', atau typo lainnya.
+        const ownerData = allUsers.find(u => 
+            u.rank && 
+            u.rank.toUpperCase().includes('OWNER') && 
+            !u.rank.toUpperCase().includes('PACAR')
+        );
+        
+        // 2. CARI ADMIN (Shadow Guard / Admin / Pacar Owner)
         const admins = allUsers.filter(u => 
-            (u.rank === 'SHADOW GUARD' || u.rank === 'ADMIN') && 
-            u.username !== (ownerData ? ownerData.username : '')
+            u.username !== (ownerData ? ownerData.username : '') && // Jangan masukin Owner lagi
+            (
+                (u.rank && u.rank.toUpperCase().includes('ADMIN')) || 
+                (u.rank && u.rank.toUpperCase().includes('SHADOW')) ||
+                (u.rank && u.rank.toUpperCase().includes('PACAR')) // Miwaa<3 masuk sini
+            )
         );
 
-        // Kasta Ketiga: Rakyat Jelata (Visitor)
-        // Ambil yang bukan Owner DAN bukan Admin
+        // 3. CARI VISITOR (Sisanya)
         const visitors = allUsers.filter(u => 
             u.username !== (ownerData ? ownerData.username : '') && 
             !admins.some(a => a.username === u.username)
-        ).slice(0, 10); // Ambil Top 10 aja biar gak kepanjangan
+        ).slice(0, 10);
 
         let html = "";
 
-        // --- RENDER TAHTA OWNER (PUTIH BERSINAR) ---
+        // --- RENDER TAHTA OWNER ---
         if (ownerData) {
             html += `
             <p class="text-[7px] text-zinc-400 mb-2 uppercase tracking-[0.3em] font-bold">-- System Authority --</p>
@@ -615,11 +623,10 @@ async function showLeaderboard() {
                 </div>
             </div>`;
         } else {
-             // Kalau Owner belum login/terdeteksi
-            html += `<div class="text-[8px] text-center text-zinc-800 italic mb-6 border border-zinc-900 p-2">SYSTEM AUTHORITY OFFLINE</div>`;
+            html += `<div class="text-[8px] text-center text-zinc-800 italic mb-6 border border-zinc-900 p-2">ARCHIVE OWNER NOT DETECTED</div>`;
         }
 
-        // --- RENDER KURSI ADMIN (MERAH MENYALA) ---
+        // --- RENDER KURSI ADMIN (Miwaa<3 bakal merah) ---
         if (admins.length > 0) {
             html += `<p class="text-[7px] text-red-600 mb-3 uppercase tracking-[0.3em] font-bold">-- Shadow Guards --</p>`;
             admins.forEach(adm => {
@@ -629,7 +636,7 @@ async function showLeaderboard() {
                         <img src="${adm.pic || 'logo.png'}" class="w-9 h-9 rounded-full border border-red-500/50 object-cover" onerror="this.src='logo.png'">
                         <div>
                             <p class="text-[10px] uppercase font-bold text-red-100">${adm.username}</p>
-                            <p class="text-[6px] text-red-500 uppercase tracking-wider">SHADOW GUARD</p>
+                            <p class="text-[6px] text-red-500 uppercase tracking-wider">${adm.rank}</p>
                         </div>
                     </div>
                     <div class="text-right">
@@ -639,7 +646,7 @@ async function showLeaderboard() {
             });
         }
 
-        // --- RENDER VISITOR (LIST BIASA) ---
+        // --- RENDER GLOBAL VISITORS ---
         html += `<p class="text-[7px] text-zinc-600 mb-3 uppercase tracking-[0.3em] mt-6">-- Global Visitors --</p>`;
         
         if (visitors.length === 0) {
