@@ -585,7 +585,7 @@ window.addEventListener('DOMContentLoaded', () => {
             });
             alert(logString);
         }
-         async function showLeaderboard() {
+        async function showLeaderboard() {
     closeAllModals();
     const modal = document.getElementById('leaderboard-modal');
     const content = document.getElementById('leaderboard-content');
@@ -601,22 +601,25 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (error) throw error;
 
-        // 1. CARI DATA OWNER (Berdasarkan Rank di Supabase)
-        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER');
-        const regularUsers = allUsers.filter(u => u.rank !== 'ARCHIVE OWNER').slice(0, 5);
+        // 1. CARI DATA OWNER (Bisa ARCHIVE OWNER atau SHADOW GUARD)
+        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER' || u.username === 'FERDI'); 
+        const regularUsers = allUsers.filter(u => u.username !== (ownerData ? ownerData.username : '')).slice(0, 5);
 
         let html = "";
 
-        // 2. BARISAN BARU KHUSUS OWNER (VIP SEAT)
+        // 2. BARISAN VIP OWNER
         if (ownerData) {
+            // Tambahkan timestamp (?t=...) biar foto profil yang baru diupdate langsung muncul
+            const profileImg = ownerData.pic ? `${ownerData.pic}` : 'logo.png';
+            
             html += `
             <p class="text-[7px] text-zinc-400 mb-2 uppercase tracking-[0.3em] font-bold">-- System Authority --</p>
             <div class="flex items-center justify-between bg-white/10 p-3 border-2 border-white/20 mb-6 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                 <div class="flex items-center gap-3">
-                    <img src="${ownerData.pic || 'logo.png'}" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-lg">
+                    <img src="${profileImg}" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-lg" onerror="this.src='logo.png'">
                     <div>
                         <p class="text-[11px] uppercase font-black text-white tracking-widest">${ownerData.username} [OWNER]</p>
-                        <p class="text-[7px] text-zinc-400 uppercase font-bold">The Void Guardian</p>
+                        <p class="text-[7px] text-zinc-400 uppercase font-bold">${ownerData.rank}</p>
                     </div>
                 </div>
                 <div class="text-right">
@@ -630,13 +633,12 @@ window.addEventListener('DOMContentLoaded', () => {
         html += `<p class="text-[7px] text-zinc-500 mb-3 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
         
         regularUsers.forEach((u, i) => {
+            const visitorImg = u.pic ? `${u.pic}` : 'logo.png';
             html += `
             <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
                 <div class="flex items-center gap-3">
                     <span class="text-[10px] text-zinc-600">#${i + 1}</span>
-                     <img src="${u.pic || 'logo.png'}" 
-                            class="w-8 h-8 rounded-full border border-zinc-700 object-cover" 
-                            onerror="this.src='logo.png'">
+                    <img src="${visitorImg}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover" onerror="this.src='logo.png'">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
                         <p class="text-[7px] text-zinc-500 uppercase">${u.rank || 'INITIATE'}</p>
@@ -650,6 +652,7 @@ window.addEventListener('DOMContentLoaded', () => {
         
         content.innerHTML = html;
     } catch (e) {
+        console.error(e);
         content.innerHTML = `<div class="text-red-500 text-[8px] text-center py-10 uppercase">ENCRYPTION ERROR</div>`;
     }
 }
@@ -665,6 +668,6 @@ window.addEventListener('DOMContentLoaded', () => {
         renderProducts();
     }
     };
-    </script>jk
+    </script>
 </body>
 </html>
