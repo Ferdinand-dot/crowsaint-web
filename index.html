@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CROWSAINT | THE HOLY FALLEN</title>
     <meta name="description" content="CROWSAINT Archive - The Holy Fallen. Koleksi pakaian Y2K dan streetwear eksklusif untuk Roblox.">
-<meta name="keywords" content="Crowsaint, Roblox Streetwear, Y2K Roblox, Warteg Simulator, Ferdi WP">
-<meta name="author" content="Ferdinand Wanda Putra">
-<meta property="og:title" content="CROWSAINT | THE HOLY FALLEN ARCHIVE">
-<meta property="og:description" content="Explore the void. Premium Roblox Clothing & Projects.">
-<meta property="og:image" content="logo.png">
-<meta property="og:url" content="https://crowsaint.com">
-
+    <meta name="keywords" content="Crowsaint, Roblox Streetwear, Y2K Roblox, Warteg Simulator, Ferdi WP">
+    <meta name="author" content="Ferdinand Wanda Putra">
+    <meta property="og:title" content="CROWSAINT | THE HOLY FALLEN ARCHIVE">
+    <meta property="og:description" content="Explore the void. Premium Roblox Clothing & Projects.">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:url" content="https://crowsaint.com">
     
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,7 +33,7 @@
         .cursor-hover #cursor svg { transform: scale(1.5); filter: drop-shadow(0 0 10px #fff); }
         @keyframes crowFlap { 0% { transform: translateY(0); } 100% { transform: translateY(-5px); } }
 
-        /* PRELOADER STYLING (UPDATED) */
+        /* PRELOADER STYLING */
         #preloader { position: fixed; inset: 0; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
         .bg-logo-spin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120vw; opacity: 0.05; animation: slowSpin 60s linear infinite; pointer-events: none; }
         @keyframes slowSpin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
@@ -49,6 +48,10 @@
         .auth-input:focus { border-color: white; }
         .auth-link { color: #666; font-size: 9px; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
         .auth-link:hover { color: #fff; }
+
+        /* FILTER BUTTONS (NEW) */
+        .cat-btn { font-size: 9px; letter-spacing: 1px; }
+        .cat-btn.active { background: white; color: black; border-color: white; }
 
         /* SIDEBAR & NAV */
         #sidebar { transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0); z-index: 100001; }
@@ -131,6 +134,11 @@
             <input type="file" id="file-upload" class="hidden" accept="image/*" onchange="handleFileSelect(this)">
         </div>
         <input type="text" id="new-name" placeholder="PRODUCT NAME" class="auth-input">
+        <select id="new-type" class="auth-input bg-black">
+            <option value="SHIRT">SHIRT</option>
+            <option value="PANTS">PANTS</option>
+            <option value="TSHIRT">T-SHIRT</option>
+        </select>
         <input type="text" id="new-link" placeholder="ROBLOX LINK" class="auth-input">
         <button onclick="saveNewProduct()" class="enter-btn w-full mt-0 header-font btn-hover">PUSH</button>
     </div>
@@ -143,10 +151,10 @@
         <textarea id="adm-misi" rows="2" placeholder="YOUR MISSION?" class="auth-input"></textarea>
         <button onclick="kirimAdminForm()" id="btn-adm" class="enter-btn w-full mt-0 header-font btn-hover">SEND APPLICATION</button>
     </div>
+
     <div id="leaderboard-modal" class="owner-modal" style="max-width: 500px;">
         <h3 class="header-font text-[10px] mb-6 tracking-widest text-center text-white">THE HOLY ARCHIVE RANKING</h3>
-        <div id="leaderboard-content" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 text-white">
-            </div>
+        <div id="leaderboard-content" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 text-white"></div>
         <button onclick="closeAllModals()" class="enter-btn w-full mt-6 header-font text-[8px]">CLOSE</button>
     </div>
 
@@ -160,7 +168,7 @@
         <select id="edit-rank" class="auth-input bg-black">
             <option value="SAINT INITIATE">SAINT INITIATE</option>
             <option value="VOID WALKER">VOID WALKER</option>
-            <option value="SHADOW GUARD">SHADOW GUARD</option>-
+            <option value="SHADOW GUARD">SHADOW GUARD</option>
         </select>
         <button onclick="saveProfile()" class="enter-btn w-full mt-4 header-font btn-hover">UPDATE</button>
     </div>
@@ -198,7 +206,7 @@
             <div class="border-t border-zinc-900 pt-6 pb-6">
                 <h4 class="text-[9px] text-zinc-600 tracking-widest mb-4 uppercase">IDENTITY</h4>
                 <div class="flex items-center gap-3">
-                    <img id="sidebar-pic" src="https://via.placeholder.com/150" class="profile-pic">
+                    <img id="sidebar-pic" src="logo.png" class="profile-pic" onerror="this.src='logo.png'">
                     <div>
                         <div id="current-user-display" class="text-[10px] font-bold uppercase text-white">GUEST</div>
                         <div id="current-rank-display" class="rank-badge">UNVERIFIED</div>
@@ -217,8 +225,8 @@
                 
                 <div class="flex gap-2 mt-6">
                     <button onclick="toggleAudio()" id="audio-btn" class="text-[9px] text-zinc-400 hover:text-white uppercase flex-1 border border-zinc-800 py-1 btn-hover">MUTE</button>
-                   <button onclick="showLoginHistory()" class="text-[9px] text-zinc-400 hover:text-white uppercase w-full border border-zinc-800 py-1 mb-2 btn-hover">LOGIN HISTORY</button>
-                    <button onclick="showLeaderboard()" class="text-[9px] text-zinc-400 hover:text-white uppercase w-full border border-zinc-800 py-1 mb-2 btn-hover">GLOBAL RANKING</button>
+                    <button onclick="showLoginHistory()" class="text-[9px] text-zinc-400 hover:text-white uppercase w-full border border-zinc-800 py-1 mb-2 btn-hover">HISTORY</button>
+                    <button onclick="showLeaderboard()" class="text-[9px] text-zinc-400 hover:text-white uppercase w-full border border-zinc-800 py-1 mb-2 btn-hover">RANKING</button>
                     <button onclick="handleLogout()" class="text-[9px] text-red-800 hover:text-red-500 uppercase flex-1 border border-red-900/30 py-1 btn-hover">LOGOUT</button>
                 </div>
             </div>
@@ -247,6 +255,14 @@
                 <h2 class="header-font text-xl text-red-500">YOUR FAVORITES</h2>
                 <div class="w-20 h-[1px] bg-red-900 mx-auto mt-2"></div>
             </div>
+
+            <div id="category-filter" class="flex flex-wrap justify-center gap-3 mb-8">
+                <button onclick="setCategory('ALL')" class="cat-btn header-font text-[9px] border border-white bg-white text-black px-4 py-2 uppercase transition-all hover:scale-105 active">ALL</button>
+                <button onclick="setCategory('SHIRT')" class="cat-btn header-font text-[9px] border border-zinc-800 text-zinc-500 px-4 py-2 uppercase transition-all hover:border-white hover:text-white">SHIRTS</button>
+                <button onclick="setCategory('PANTS')" class="cat-btn header-font text-[9px] border border-zinc-800 text-zinc-500 px-4 py-2 uppercase transition-all hover:border-white hover:text-white">PANTS</button>
+                <button onclick="setCategory('TSHIRT')" class="cat-btn header-font text-[9px] border border-zinc-800 text-zinc-500 px-4 py-2 uppercase transition-all hover:border-white hover:text-white">T-SHIRTS</button>
+            </div>
+
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </section>
     </main>
@@ -268,85 +284,69 @@
         let tempProfileImgUrl = ""; 
         let currentUser = null;
         let currentTab = 'home';
+        let currentCategory = 'ALL'; // NEW STATE FOR FILTER
         
-        const initialProducts = [
-    { id: 1, name: "DARK ANGEL", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "crowsaint-dark-angel-y2k-shirt.jpg" },
-    { id: 2, name: "PIXEL KNIGHT", link: "https://www.roblox.com/id/catalog/124309605398103/", img: "crowsaint-pixel-knight-cyber-shirt.jpg" },
-    { id: 3, name: "TRUE SPIRIT", link: "https://www.roblox.com/id/catalog/75655921151654/", img: "crowsaint-true-spirit-angel-shirt.jpg" },
-    { id: 4, name: "SKELETON VINTAGE", link: "https://www.roblox.com/id/catalog/132636175212887/", img: "crowsaint-skeleton-vintage-grunge-shirt.jpg" },
-    { id: 5, name: "CRIMSON TACTICAL", link: "https://www.roblox.com/id/catalog/110975831284516/", img: "crowsaint-crimson-tactical-techwear-shirt.jpg" },
-    { id: 6, name: "ROYAL GOTH", link: "https://www.roblox.com/id/catalog/116830912569538/", img: "crowsaint-royal-goth-fallen-shirt.jpg" },
-    { id: 7, name: "SHIBUYA RAVEN", link: "https://www.roblox.com/id/catalog/92039399309120/", img: "crowsaint-shibuya-raven-streetwear-shirt.jpg" },
-    { id: 8, name: "VOID STARE", link: "https://www.roblox.com/id/catalog/103938443054749/", img: "crowsaint-void-stare-minimalist-shirt.jpg" },
-    { id: 9, name: "4TUNE TRACKSUIT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "crowsaint-4tune-tracksuit-y2k-shirt.jpg" },
-    { id: 10, name: "VOID GUARDIAN", link: "https://www.roblox.com/id/catalog/100455808788629/", img: "crowsaint-void-guardian-armor-shirt.jpg" },
-    { id: 11, name: "WHITE JACKET", link: "https://www.roblox.com/id/catalog/125839992394725/", img: "crowsaint-white-jacket-angelic-y2k.jpg" }
-];
-
+       
+    const initialProducts = [
+        { id: 1, name: "DARK ANGEL", type: "SHIRT", link: "https://www.roblox.com/id/catalog/112826960972224/", img: "crowsaint-dark-angel-y2k-shirt.jpg" },
+        { id: 2, name: "PIXEL KNIGHT", type: "SHIRT", link: "https://www.roblox.com/id/catalog/124309605398103/", img: "crowsaint-pixel-knight-cyber-shirt.jpg" },
+        { id: 3, name: "TRUE SPIRIT", type: "SHIRT", link: "https://www.roblox.com/id/catalog/75655921151654/", img: "crowsaint-true-spirit-angel-shirt.jpg" },
+        { id: 4, name: "SKELETON VINTAGE", type: "SHIRT", link: "https://www.roblox.com/id/catalog/132636175212887/", img: "crowsaint-skeleton-vintage-grunge-shirt.jpg" },
+        { id: 5, name: "CRIMSON TACTICAL", type: "SHIRT", link: "https://www.roblox.com/id/catalog/110975831284516/", img: "crowsaint-crimson-tactical-techwear-shirt.jpg" },
+        { id: 6, name: "ROYAL GOTH", type: "SHIRT", link: "https://www.roblox.com/id/catalog/116830912569538/", img: "crowsaint-royal-goth-fallen-shirt.jpg" },
+        { id: 7, name: "SHIBUYA RAVEN", type: "SHIRT", link: "https://www.roblox.com/id/catalog/92039399309120/", img: "crowsaint-shibuya-raven-streetwear-shirt.jpg" },
+        { id: 8, name: "VOID STARE", type: "SHIRT", link: "https://www.roblox.com/id/catalog/103938443054749/", img: "crowsaint-void-stare-minimalist-shirt.jpg" },
+        { id: 9, name: "4TUNE TRACKSUIT", type: "SHIRT", link: "https://www.roblox.com/id/catalog/98632374215258/", img: "crowsaint-4tune-tracksuit-y2k-shirt.jpg" },
+        { id: 10, name: "VOID GUARDIAN", type: "SHIRT", link: "https://www.roblox.com/id/catalog/100455808788629/", img: "crowsaint-void-guardian-armor-shirt.jpg" },
+        { id: 11, name: "WHITE JACKET", type: "SHIRT", link: "https://www.roblox.com/id/catalog/125839992394725/", img: "crowsaint-white-jacket-angelic-y2k.jpg" }
+    ];
         // --- AUTH & LOAD ---
-     function showLogin() {
-    // Sembunyiin SEMUA biar gak double
-    document.getElementById('welcome-screen').classList.add('hidden');
-    document.getElementById('register-screen').classList.add('hidden');
-    
-    // Kalau sudah ada sesi, gak usah login lagi, langsung hajar loading
-    if (currentUser) {
-        startLoading(); 
-    } else {
-        document.getElementById('login-screen').classList.remove('hidden');
-    }
+        function showLogin() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            if (currentUser) { startLoading(); } 
+            else { document.getElementById('login-screen').classList.remove('hidden'); }
+            if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio permission needed")); }
+        }
 
-    if(audio.paused) { 
-        audio.volume = 1.0; 
-        audio.play().catch(e => console.log("Audio permission needed")); 
-    }
-}
-
-function showRegister() {
-    // Sembunyiin welcome dan login sebelum buka register
-    document.getElementById('welcome-screen').classList.add('hidden');
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('register-screen').classList.remove('hidden');
-}
         function showRegister() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('register-screen').classList.remove('hidden'); }
-            async function handleRegister() {
-        const user = document.getElementById('reg-user').value.toUpperCase().trim();
-        const pass = document.getElementById('reg-pass').value;
-        const conf = document.getElementById('reg-pass-conf').value;
+        
+        async function handleRegister() {
+            const user = document.getElementById('reg-user').value.toUpperCase().trim();
+            const pass = document.getElementById('reg-pass').value;
+            const conf = document.getElementById('reg-pass-conf').value;
+            if(!user || !pass || !conf) return alert("EMPTY FIELDS.");
+            if(pass !== conf) return alert("PASSWORD MISMATCH.");
 
-        if(!user || !pass || !conf) return alert("EMPTY FIELDS.");
-        if(pass !== conf) return alert("PASSWORD MISMATCH.");
+            const { error } = await supabaseClient
+                .from('leaderboard')
+                .upsert({ username: user, password: pass, pic: "logo.png", rank: "SAINT INITIATE", points: 0 });
 
-        // Kirim data ke tabel 'users' di Supabase
-        const { error } = await supabaseClient
-            .from('leaderboard') // Kita pake tabel yang sama tapi tambahin kolom password
-            .upsert({ 
-                username: user, 
-                password: pass, // PASTIIN DI SUPABASE SUDAH ADA KOLOM 'password' (Type: text)
-                pic: "logo.png",
-                rank: "SAINT INITIATE",
-                points: 0
-            });
+            if (error) return alert("REGISTER FAILED: " + error.message);
+            alert("IDENTITY ESTABLISHED IN THE CLOUD."); showLogin();
+        }
 
-    if (error) return alert("REGISTER FAILED: " + error.message);
-    alert("IDENTITY ESTABLISHED IN THE CLOUD.");
-    showLogin();
-}
-        function handleLogin() {
+        async function handleLogin() {
             const user = document.getElementById('login-user').value.toUpperCase().trim();
             const pass = document.getElementById('login-pass').value;
-            let users = JSON.parse(localStorage.getItem('crowsaint_users')) || [];
-            const foundUser = users.find(u => u.username === user && u.password === pass);
-            if(foundUser) { currentUser = foundUser; updateProfileUI(); startLoading(); } 
-            else { alert("ACCESS DENIED: INVALID CREDENTIALS."); }
+            if(!user || !pass) return alert("IDENTIFY YOURSELF FIRST.");
+
+            const { data: foundUser, error } = await supabaseClient
+                .from('leaderboard').select('*').eq('username', user).eq('password', pass).single();
+
+            if (error || !foundUser) { alert("ACCESS DENIED."); return; }
+            currentUser = foundUser; 
+            localStorage.setItem('crowsaint_session', JSON.stringify(foundUser));
+            saveLoginLog(user); updateProfileUI(); startLoading(); 
         }
-       function handleLogout() {
-    if(confirm("LOGOUT FROM ARCHIVE?")) {
-        localStorage.removeItem('crowsaint_session'); // Hapus sesi di browser
-        currentUser = null;
-        location.reload(); // Balik ke Welcome Screen
-    }
-}
+
+        function handleLogout() {
+            if(confirm("LOGOUT FROM ARCHIVE?")) {
+                localStorage.removeItem('crowsaint_session'); 
+                currentUser = null; location.reload();
+            }
+        }
+
         function startLoading() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
@@ -363,57 +363,11 @@ function showRegister() {
                 }
             }, 80);
         }
-        async function handleLogin() {
-    const user = document.getElementById('login-user').value.toUpperCase().trim();
-    const pass = document.getElementById('login-pass').value;
 
-    if(!user || !pass) return alert("IDENTIFY YOURSELF FIRST.");
-
-    // 1. CEK KE CLOUD (SUPABASE)
-    const { data: foundUser, error } = await supabaseClient
-        .from('leaderboard')
-        .select('*')
-        .eq('username', user)
-        .eq('password', pass)
-        .single();
-
-    if (error) {
-        console.error("SUPABASE ERROR:", error.message);
-        alert("ACCESS DENIED: IDENTITY NOT FOUND IN ARCHIVE.");
-        return;
-    }
-
-    if (foundUser) { 
-        // 2. SET USER AKTIF
-        currentUser = foundUser; 
-        
-        // 3. SIMPAN SESI KE DEVICE (Penting biar bisa login di banyak device)
-        localStorage.setItem('crowsaint_session', JSON.stringify(foundUser));
-        
-        // 4. UPDATE UI & JALANKAN LOADING
-        saveLoginLog(user); 
-        updateProfileUI(); 
-        startLoading(); 
-        
-        console.log("GLOBAL ACCESS GRANTED FOR:", user);
-    }
-}
-
-// 5. AUTO-LOAD SESI (Taruh ini di paling bawah kodingan JS lo biar pas buka di HP langsung masuk)
-window.addEventListener('DOMContentLoaded', () => {
-    const savedSession = localStorage.getItem('crowsaint_session');
-    if (savedSession) {
-        currentUser = JSON.parse(savedSession);
-        // Langsung buka archive tanpa login ulang
-        document.getElementById('preloader').style.display = 'none';
-        document.getElementById('main-nav').classList.remove('hidden');
-        document.getElementById('sidebar-toggle').classList.remove('hidden');
-        updateProfileUI();
-        renderProducts();
-        console.log("SESSION RESTORED FROM CLOUD.");
-    }
-    });
-
+        // --- SUPABASE CONFIG ---
+        const supabaseUrl = 'https://jsvddqdqczdfozxzjjso.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpzdmRkcWRxY3pkZm96eHpqanNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3Mzc4OTQsImV4cCI6MjA4NDMxMzg5NH0.4_RmWTcfd-PNKAyzae1xtmJQF5cZYDQQw__xQPw6l7g'; 
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         // --- PROFILE SYSTEM ---
         function updateProfileUI() {
@@ -422,118 +376,84 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('current-rank-display').innerText = currentUser.rank;
             document.getElementById('sidebar-pic').src = currentUser.pic;
         }
-        // ISI PAKAI DATA DARI FOTO SUPABASE LO
-        const supabaseUrl = 'https://jsvddqdqczdfozxzjjso.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpzdmRkcWRxY3pkZm96eHpqanNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3Mzc4OTQsImV4cCI6MjA4NDMxMzg5NH0.4_RmWTcfd-PNKAyzae1xtmJQF5cZYDQQw__xQPw6l7g'; // Cari kode panjang di bawah URL tadi
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         function openProfileModal() { closeAllModals(); document.getElementById('profile-modal').classList.add('active'); document.getElementById('modal-overlay').classList.add('active'); }
+        
         setInterval(async () => {
-    if (currentUser) {
-        const { data } = await supabaseClient.from('leaderboard').select('points').eq('username', currentUser.username).single();
-        let currentPts = (data ? data.points : 0) + 1;
+            if (currentUser) {
+                const { data } = await supabaseClient.from('leaderboard').select('points').eq('username', currentUser.username).single();
+                let currentPts = (data ? data.points : 0) + 1;
+                await supabaseClient.from('leaderboard').upsert({ username: currentUser.username, points: currentPts, pic: currentUser.pic || '', rank: currentUser.rank || 'SAINT INITIATE' });
+            }
+        }, 300000); 
 
-        await supabaseClient.from('leaderboard').upsert({ 
-            username: currentUser.username, 
-            points: currentPts,
-            pic: currentUser.pic || '',
-            rank: currentUser.rank || 'SAINT INITIATE'
-        });
-        }
-}, 300000); // 5 menit sekali poin naik
         function handleProfileFileSelect(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = (e) => { 
-                    tempProfileImgUrl = e.target.result; 
-                    document.getElementById('profile-file-display').innerText = "IMAGE SELECTED"; 
-                };
+                reader.onload = (e) => { tempProfileImgUrl = e.target.result; document.getElementById('profile-file-display').innerText = "IMAGE SELECTED"; };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-    async function saveProfile() {
-    const newRank = document.getElementById('edit-rank').value;
-    
-    // 1. PROTEKSI RANK SUPERIOR
-    if (newRank === "SHADOW GUARD") {
-        const secretKey = prompt("ENTER SHADOW KEY TO ASCEND:");
-        if (secretKey !== "admin123") {
-            alert("ACCESS DENIED: NOT WORTHY.");
-            return;
-        }
-    }
-
-    // 2. KIRIM UPDATE KE SUPABASE
-    const updateData = { rank: newRank };
-    if(tempProfileImgUrl) { updateData.pic = tempProfileImgUrl; }
-
-    const { data, error } = await supabaseClient
-        .from('leaderboard')
-        .update(updateData)
-        .eq('username', currentUser.username);
-
-    if (error) {
-        alert("UPDATE FAILED: " + error.message);
-    } else {
-        // 3. UPDATE SESI LOKAL
-        currentUser.rank = newRank;
-        if(tempProfileImgUrl) currentUser.pic = tempProfileImgUrl;
-        localStorage.setItem('crowsaint_session', JSON.stringify(currentUser));
-        
-        updateProfileUI(); 
-        closeAllModals(); 
-        alert("IDENTITY UPDATED IN THE CLOUD.");
-        location.reload(); // Refresh biar semua data sinkron
-    }
-}
-
-        // --- FAVORITES SYSTEM ---
-        function toggleFavorite(id) {
-            if(favorites.includes(id)) { favorites = favorites.filter(fid => fid !== id); } 
-            else { favorites.push(id); }
-            localStorage.setItem('crowsaint_favs', JSON.stringify(favorites));
-            renderProducts();
-        }
-
-        // --- NAVIGATION & RENDER ---
-        function toggleSidebar() { 
-            const sb = document.getElementById('sidebar'), btn = document.getElementById('sidebar-toggle');
-            sb.classList.toggle('-translate-x-full'); 
-            if(sb.classList.contains('-translate-x-full')) btn.classList.remove('hidden'); else btn.classList.add('hidden');
-        }
-
-        function switchTab(tab) {
-            currentTab = tab;
-            const home = document.getElementById('home-section');
-            const shop = document.getElementById('shop-section');
-            const search = document.getElementById('search-ui');
-            const favHeader = document.getElementById('fav-header');
+        async function saveProfile() {
+            const newRank = document.getElementById('edit-rank').value;
+            if (newRank === "SHADOW GUARD") { if(prompt("ENTER SHADOW KEY:") !== "admin123") return alert("ACCESS DENIED."); }
             
-            ['home-tab', 'shop-tab', 'fav-tab'].forEach(id => document.getElementById(id).classList.remove('active'));
+            const updateData = { rank: newRank };
+            if(tempProfileImgUrl) { updateData.pic = tempProfileImgUrl; }
 
-            if(tab === 'home') {
-                home.classList.remove('hidden'); shop.classList.add('hidden'); search.style.display = 'none';
-                document.getElementById('home-tab').classList.add('active');
-            } else if (tab === 'shop') {
-                home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex';
-                favHeader.classList.add('hidden'); 
-                document.getElementById('shop-tab').classList.add('active');
-                renderProducts();
-            } else if (tab === 'favorites') {
-                home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex';
-                favHeader.classList.remove('hidden'); 
-                document.getElementById('fav-tab').classList.add('active');
-                renderProducts();
+            const { error } = await supabaseClient.from('leaderboard').update(updateData).eq('username', currentUser.username);
+            if (error) { alert("UPDATE FAILED"); } else {
+                currentUser.rank = newRank; if(tempProfileImgUrl) currentUser.pic = tempProfileImgUrl;
+                localStorage.setItem('crowsaint_session', JSON.stringify(currentUser));
+                updateProfileUI(); closeAllModals(); alert("UPDATED.");
             }
-            document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-toggle').classList.remove('hidden');
         }
 
+        
+    function setCategory(cat) {
+        currentCategory = cat;
+        
+        // 1. AMBIL SEMUA TOMBOL, RESET JADI TAMPILAN "MATI" (Garis Tipis)
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            // Kita reset class-nya secara manual biar pasti bersih
+            btn.className = "cat-btn header-font text-[9px] border border-zinc-800 text-zinc-500 px-4 py-2 uppercase transition-all hover:border-white hover:text-white";
+            
+            // 2. CEK MANA YANG HARUS "NYALA" (Putih Full)
+            const txt = btn.innerText;
+            // Kita cocokin Logic Data (cat) sama Tulisan Tombol (txt)
+            if(
+                (cat === 'ALL' && txt === 'ALL') ||
+                (cat === 'SHIRT' && txt === 'SHIRTS') ||
+                (cat === 'PANTS' && txt === 'PANTS') ||
+                (cat === 'TSHIRT' && txt === 'T-SHIRTS')
+            ) {
+                // Kalau cocok, ganti jadi class "Aktif"
+                btn.className = "cat-btn header-font text-[9px] border border-white bg-white text-black px-4 py-2 uppercase transition-all hover:scale-105 active";
+            }
+        });
+    
+    renderProducts();
+}
         function renderProducts() {
             const allProducts = [...initialProducts, ...localProducts];
             const q = document.getElementById('search-bar').value.toUpperCase();
             
             let displayProducts = allProducts;
-            if(currentTab === 'favorites') { displayProducts = allProducts.filter(p => favorites.includes(p.id)); }
+
+            // 1. Tab Filter
+            if(currentTab === 'favorites') { 
+                displayProducts = allProducts.filter(p => favorites.includes(p.id)); 
+                document.getElementById('category-filter').classList.add('hidden'); 
+            } else {
+                document.getElementById('category-filter').classList.remove('hidden');
+            }
+
+            // 2. Category Filter
+            if(currentTab !== 'favorites' && currentCategory !== 'ALL') {
+                displayProducts = displayProducts.filter(p => p.type === currentCategory);
+            }
+
+            // 3. Search Filter
             displayProducts = displayProducts.filter(p => p.name.includes(q));
             
             const grid = document.getElementById('product-grid');
@@ -542,13 +462,12 @@ window.addEventListener('DOMContentLoaded', () => {
             grid.innerHTML = displayProducts.map(p => {
                 const isFav = favorites.includes(p.id);
                 return `
-                <div class="card-glow reveal p-3 md:p-5 bg-black/40 backdrop-blur-sm relative">
+                <div class="card-glow reveal p-3 md:p-5 bg-black/40 backdrop-blur-sm relative animate-fadeIn">
                     ${p.isLocal ? `<div class="delete-badge" onclick="deleteProduct(${p.id})">DEL</div>` : ''}
                     <div class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${p.id})">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     </div>
+                    <div class="absolute top-2 right-2 text-[7px] bg-zinc-900 px-2 py-1 text-zinc-500 border border-zinc-800 uppercase">${p.type || 'UNKNOWN'}</div>
                     <div class="aspect-square bg-zinc-950 mb-4 flex items-center justify-center overflow-hidden border border-zinc-900 group">
                         <img src="${p.img}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                     </div>
@@ -558,6 +477,29 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>`}).join('');
             attachCursorEvents();
+        }
+
+        // --- NAVIGATION & UTILS ---
+        function toggleFavorite(id) {
+            if(favorites.includes(id)) { favorites = favorites.filter(fid => fid !== id); } else { favorites.push(id); }
+            localStorage.setItem('crowsaint_favs', JSON.stringify(favorites)); renderProducts();
+        }
+
+        function toggleSidebar() { 
+            const sb = document.getElementById('sidebar'), btn = document.getElementById('sidebar-toggle');
+            sb.classList.toggle('-translate-x-full'); 
+            if(sb.classList.contains('-translate-x-full')) btn.classList.remove('hidden'); else btn.classList.add('hidden');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const home = document.getElementById('home-section'), shop = document.getElementById('shop-section'), search = document.getElementById('search-ui'), favHeader = document.getElementById('fav-header');
+            ['home-tab', 'shop-tab', 'fav-tab'].forEach(id => document.getElementById(id).classList.remove('active'));
+
+            if(tab === 'home') { home.classList.remove('hidden'); shop.classList.add('hidden'); search.style.display = 'none'; document.getElementById('home-tab').classList.add('active'); } 
+            else if (tab === 'shop') { home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex'; favHeader.classList.add('hidden'); document.getElementById('shop-tab').classList.add('active'); renderProducts(); } 
+            else if (tab === 'favorites') { home.classList.add('hidden'); shop.classList.remove('hidden'); search.style.display = 'flex'; favHeader.classList.remove('hidden'); document.getElementById('fav-tab').classList.add('active'); renderProducts(); }
+            document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-toggle').classList.remove('hidden');
         }
 
         // --- ADMIN & DATA ---
@@ -573,13 +515,24 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         function checkOwner() { if(prompt("ACCESS KEY:") === "admin123") { document.getElementById('owner-modal').classList.add('active'); document.getElementById('modal-overlay').classList.add('active'); } else { alert("DENIED."); } }
         function handleFileSelect(input) { if (input.files[0]) { const r = new FileReader(); r.onload = (e) => { tempImgUrl = e.target.result; document.getElementById('file-name-display').innerText = "READY"; }; r.readAsDataURL(input.files[0]); } }
-        function saveNewProduct() { const n=document.getElementById('new-name').value, l=document.getElementById('new-link').value; if(!tempImgUrl||!n||!l) return alert("EMPTY"); localProducts.push({id:Date.now(), name:n.toUpperCase(), link:l, img:tempImgUrl, isLocal:true}); localStorage.setItem('crowsaint_items', JSON.stringify(localProducts)); renderProducts(); closeAllModals(); }
+        
+        // SAVE PRODUCT WITH TYPE (UPDATED)
+        function saveNewProduct() { 
+            const n=document.getElementById('new-name').value;
+            const l=document.getElementById('new-link').value; 
+            const t=document.getElementById('new-type').value; // Get Type
+            if(!tempImgUrl||!n||!l) return alert("EMPTY"); 
+            localProducts.push({id:Date.now(), name:n.toUpperCase(), type: t, link:l, img:tempImgUrl, isLocal:true}); 
+            localStorage.setItem('crowsaint_items', JSON.stringify(localProducts)); 
+            renderProducts(); closeAllModals(); 
+        }
+
         function deleteProduct(id) { if(confirm("DELETE?")) { localProducts = localProducts.filter(p=>p.id!==id); localStorage.setItem('crowsaint_items', JSON.stringify(localProducts)); renderProducts(); } }
         function closeAllModals() { document.querySelectorAll('.owner-modal').forEach(m => m.classList.remove('active')); document.getElementById('modal-overlay').classList.remove('active'); }
         function handleSearch() { renderProducts(); }
         function toggleAudio() { const btn = document.getElementById('audio-btn'); if(audio.paused) { audio.play(); btn.innerText = "MUTE"; } else { audio.pause(); btn.innerText = "UNMUTE"; } }
 
-        // --- UTILS ---
+        // --- VISUALS ---
         const cursor = document.getElementById('cursor'), border = document.getElementById('cursor-border');
         document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; border.style.left = e.clientX + 'px'; border.style.top = e.clientY + 'px'; });
         function attachCursorEvents() { document.querySelectorAll('a, button, input, textarea, .file-wrapper, .delete-badge, .auth-link, .fav-btn').forEach(el => { el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover')); el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover')); }); }
@@ -590,30 +543,24 @@ window.addEventListener('DOMContentLoaded', () => {
         function draw() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff"; stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.s,0,7);ctx.fill();s.y+=0.2;if(s.y>canvas.height)s.y=0}); requestAnimationFrame(draw); }
         window.onresize=initStars; initStars(); draw(); setInterval(()=>{const n=new Date(); document.getElementById('digital-clock').innerText=n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0')+":"+n.getSeconds().toString().padStart(2,'0')},1000);
         renderProducts(); ScrollReveal().reveal('.reveal',{distance:'20px',duration:800});
-        // MESIN PENCATAT LOGIN
+        
         function saveLoginLog(username) {
             let logs = JSON.parse(localStorage.getItem('crowsaint_login_logs')) || [];
-            const newLog = {
-                user: username,
-                time: new Date().toLocaleString('id-ID')
-            };
-            logs.unshift(newLog); // Simpan yang terbaru di paling atas
-            if(logs.length > 10) logs.pop(); // Simpan 10 riwayat terakhir aja biar gak penuh
+            const newLog = { user: username, time: new Date().toLocaleString('id-ID') };
+            logs.unshift(newLog); if(logs.length > 10) logs.pop();
             localStorage.setItem('crowsaint_login_logs', JSON.stringify(logs));
         }
 
-        // FUNGSI MENAMPILKAN RIWAYAT
         function showLoginHistory() {
             let logs = JSON.parse(localStorage.getItem('crowsaint_login_logs')) || [];
             if(logs.length === 0) return alert("NO LOGIN HISTORY FOUND.");
-            
             let logString = "--- CROWSAINT LOGIN HISTORY ---\n\n";
-            logs.forEach((log, i) => {
-                logString += `${i+1}. ${log.user} | ${log.time}\n`;
-            });
+            logs.forEach((log, i) => { logString += `${i+1}. ${log.user} | ${log.time}\n`; });
             alert(logString);
         }
-        async function showLeaderboard() {
+
+        // GANTI FUNCTION showLeaderboard YANG LAMA DENGAN INI:
+async function showLeaderboard() {
     closeAllModals();
     const modal = document.getElementById('leaderboard-modal');
     const content = document.getElementById('leaderboard-content');
@@ -629,54 +576,92 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (error) throw error;
 
-        // 1. CARI DATA OWNER (Bisa ARCHIVE OWNER atau SHADOW GUARD)
-        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER' || u.username === 'FERDI'); 
-        const regularUsers = allUsers.filter(u => u.username !== (ownerData ? ownerData.username : '')).slice(0, 5);
+        // 1. FILTER KASTA (HIERARKI)
+        // Kasta Tertinggi: Owner (Username FERDI atau Rank ARCHIVE OWNER)
+        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER' || u.username === 'FERDI' || u.username === 'FERDINAND');
+        
+        // Kasta Kedua: Admin (Rank SHADOW GUARD)
+        // Kita filter yang rank-nya SHADOW GUARD tapi BUKAN si Owner tadi
+        const admins = allUsers.filter(u => 
+            (u.rank === 'SHADOW GUARD' || u.rank === 'ADMIN') && 
+            u.username !== (ownerData ? ownerData.username : '')
+        );
+
+        // Kasta Ketiga: Rakyat Jelata (Visitor)
+        // Ambil yang bukan Owner DAN bukan Admin
+        const visitors = allUsers.filter(u => 
+            u.username !== (ownerData ? ownerData.username : '') && 
+            !admins.some(a => a.username === u.username)
+        ).slice(0, 10); // Ambil Top 10 aja biar gak kepanjangan
 
         let html = "";
 
-        // 2. BARISAN VIP OWNER
+        // --- RENDER TAHTA OWNER (PUTIH BERSINAR) ---
         if (ownerData) {
-            // Tambahkan timestamp (?t=...) biar foto profil yang baru diupdate langsung muncul
-            const profileImg = ownerData.pic ? `${ownerData.pic}` : 'logo.png';
-            
             html += `
             <p class="text-[7px] text-zinc-400 mb-2 uppercase tracking-[0.3em] font-bold">-- System Authority --</p>
-            <div class="flex items-center justify-between bg-white/10 p-3 border-2 border-white/20 mb-6 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                <div class="flex items-center gap-3">
-                    <img src="${profileImg}" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-lg" onerror="this.src='logo.png'">
+            <div class="flex items-center justify-between bg-white/10 p-3 border-2 border-white/20 mb-6 shadow-[0_0_20px_rgba(255,255,255,0.15)] relative overflow-hidden">
+                <div class="scanline"></div>
+                <div class="flex items-center gap-3 relative z-10">
+                    <img src="${ownerData.pic || 'logo.png'}" class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-lg" onerror="this.src='logo.png'">
                     <div>
-                        <p class="text-[11px] uppercase font-black text-white tracking-widest">${ownerData.username} [OWNER]</p>
-                        <p class="text-[7px] text-zinc-400 uppercase font-bold">${ownerData.rank}</p>
+                        <p class="text-[12px] uppercase font-black text-white tracking-widest">${ownerData.username} 👑</p>
+                        <p class="text-[7px] text-zinc-300 uppercase font-bold tracking-widest">ARCHIVE OWNER</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-[11px] font-mono text-white">${ownerData.points || 0}</p>
-                    <p class="text-[6px] text-zinc-500 uppercase">MASTER PTS</p>
+                <div class="text-right relative z-10">
+                    <p class="text-[12px] font-mono text-white font-bold">${ownerData.points || 0}</p>
+                    <p class="text-[6px] text-zinc-500 uppercase">MASTER POINTS</p>
                 </div>
             </div>`;
+        } else {
+             // Kalau Owner belum login/terdeteksi
+            html += `<div class="text-[8px] text-center text-zinc-800 italic mb-6 border border-zinc-900 p-2">SYSTEM AUTHORITY OFFLINE</div>`;
         }
 
-        // 3. BARISAN GLOBAL VISITORS
-        html += `<p class="text-[7px] text-zinc-500 mb-3 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
-        
-        regularUsers.forEach((u, i) => {
-            const visitorImg = u.pic ? `${u.pic}` : 'logo.png';
-            html += `
-            <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
-                <div class="flex items-center gap-3">
-                    <span class="text-[10px] text-zinc-600">#${i + 1}</span>
-                    <img src="${visitorImg}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover" onerror="this.src='logo.png'">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
-                        <p class="text-[7px] text-zinc-500 uppercase">${u.rank || 'INITIATE'}</p>
+        // --- RENDER KURSI ADMIN (MERAH MENYALA) ---
+        if (admins.length > 0) {
+            html += `<p class="text-[7px] text-red-600 mb-3 uppercase tracking-[0.3em] font-bold">-- Shadow Guards --</p>`;
+            admins.forEach(adm => {
+                html += `
+                <div class="flex items-center justify-between bg-gradient-to-r from-red-950/40 to-black p-2 border-l-2 border-red-600 mb-3 hover:bg-red-900/20 transition-all">
+                    <div class="flex items-center gap-3">
+                        <img src="${adm.pic || 'logo.png'}" class="w-9 h-9 rounded-full border border-red-500/50 object-cover" onerror="this.src='logo.png'">
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-red-100">${adm.username}</p>
+                            <p class="text-[6px] text-red-500 uppercase tracking-wider">SHADOW GUARD</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-mono text-white">${u.points || 0}</p>
-                </div>
-            </div>`;
-        });
+                    <div class="text-right">
+                        <p class="text-[10px] font-mono text-red-200">${adm.points || 0}</p>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // --- RENDER VISITOR (LIST BIASA) ---
+        html += `<p class="text-[7px] text-zinc-600 mb-3 uppercase tracking-[0.3em] mt-6">-- Global Visitors --</p>`;
+        
+        if (visitors.length === 0) {
+            html += `<div class="text-[8px] text-center text-zinc-800 italic">NO SIGNALS DETECTED.</div>`;
+        } else {
+            visitors.forEach((u, i) => {
+                html += `
+                <div class="flex items-center justify-between bg-zinc-900/30 p-2 border-b border-zinc-800 mb-1 hover:bg-zinc-800 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="text-[9px] text-zinc-700 font-mono w-4">#${i + 1}</span>
+                        <img src="${u.pic || 'logo.png'}" class="w-7 h-7 rounded-full border border-zinc-800 object-cover grayscale opacity-60" onerror="this.src='logo.png'">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-zinc-400">${u.username}</p>
+                            <p class="text-[6px] text-zinc-600 uppercase">${u.rank || 'INITIATE'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[9px] font-mono text-zinc-500">${u.points || 0}</p>
+                    </div>
+                </div>`;
+            });
+        }
         
         content.innerHTML = html;
     } catch (e) {
@@ -684,19 +669,11 @@ window.addEventListener('DOMContentLoaded', () => {
         content.innerHTML = `<div class="text-red-500 text-[8px] text-center py-10 uppercase">ENCRYPTION ERROR</div>`;
     }
 }
-      window.onload = () => {
-    const session = localStorage.getItem('crowsaint_session');
-    if (session) {
-        currentUser = JSON.parse(session);
-        updateProfileUI();
-        renderProducts();
-        // JANGAN matikan preloader di sini biar tombol ENTER tetap muncul
-        console.log("SESSION DETECTED. WAITING FOR USER TO ENTER.");
-    }
-};
+
+        window.onload = () => {
+            const session = localStorage.getItem('crowsaint_session');
+            if (session) { currentUser = JSON.parse(session); updateProfileUI(); renderProducts(); }
+        };
     </script>
 </body>
 </html>
-
-
-
