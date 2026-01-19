@@ -275,12 +275,30 @@
         ];
 
         // --- AUTH & LOAD ---
-        function showLogin() {
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('register-screen').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-            if(audio.paused) { audio.volume = 1.0; audio.play().catch(e => console.log("Audio permission needed")); }
-        }
+     function showLogin() {
+    // Sembunyiin SEMUA biar gak double
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('register-screen').classList.add('hidden');
+    
+    // Kalau sudah ada sesi, gak usah login lagi, langsung hajar loading
+    if (currentUser) {
+        startLoading(); 
+    } else {
+        document.getElementById('login-screen').classList.remove('hidden');
+    }
+
+    if(audio.paused) { 
+        audio.volume = 1.0; 
+        audio.play().catch(e => console.log("Audio permission needed")); 
+    }
+}
+
+function showRegister() {
+    // Sembunyiin welcome dan login sebelum buka register
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('register-screen').classList.remove('hidden');
+}
         function showRegister() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('register-screen').classList.remove('hidden'); }
             async function handleRegister() {
         const user = document.getElementById('reg-user').value.toUpperCase().trim();
@@ -313,12 +331,13 @@
             if(foundUser) { currentUser = foundUser; updateProfileUI(); startLoading(); } 
             else { alert("ACCESS DENIED: INVALID CREDENTIALS."); }
         }
-        function handleLogout() {
-            if(confirm("LOGOUT FROM ARCHIVE?")) {
-                currentUser = null;
-                location.reload(); // Ini yang bikin halaman balik ke awal
-            }
-        }
+       function handleLogout() {
+    if(confirm("LOGOUT FROM ARCHIVE?")) {
+        localStorage.removeItem('crowsaint_session'); // Hapus sesi di browser
+        currentUser = null;
+        location.reload(); // Balik ke Welcome Screen
+    }
+}
         function startLoading() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('loading-status').classList.remove('hidden');
@@ -656,18 +675,16 @@ window.addEventListener('DOMContentLoaded', () => {
         content.innerHTML = `<div class="text-red-500 text-[8px] text-center py-10 uppercase">ENCRYPTION ERROR</div>`;
     }
 }
-        window.onload = () => {
+      window.onload = () => {
     const session = localStorage.getItem('crowsaint_session');
     if (session) {
         currentUser = JSON.parse(session);
-        // Langsung lompat ke dashboard kalau sudah pernah login di device ini
-        document.getElementById('preloader').style.display = 'none';
-        document.getElementById('main-nav').classList.remove('hidden');
-        document.getElementById('sidebar-toggle').classList.remove('hidden');
         updateProfileUI();
         renderProducts();
+        // JANGAN matikan preloader di sini biar tombol ENTER tetap muncul
+        console.log("SESSION DETECTED. WAITING FOR USER TO ENTER.");
     }
-    };
+};
     </script>
 </body>
 </html>
