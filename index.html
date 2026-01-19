@@ -166,10 +166,10 @@
         </div>
         <div class="text-[8px] text-zinc-500 mb-2 mt-4 uppercase">Select Rank:</div>
         <select id="edit-rank" class="auth-input bg-black">
-            <option value="SAINT INITIATE">SAINT INITIATE</option>
-            <option value="VOID WALKER">VOID WALKER</option>
-            <option value="SHADOW GUARD">SHADOW GUARD</option>
-        </select>
+    <option value="SAINT INITIATE">SAINT INITIATE</option>
+    <option value="VOID WALKER">VOID WALKER</option>
+    <option value="SHADOW GUARD">SHADOW GUARD</option>
+    <option value="ARCHIVE OWNER">ARCHIVE OWNER (SYSTEM ONLY)</option> </select>
         <button onclick="saveProfile()" class="enter-btn w-full mt-4 header-font btn-hover">UPDATE</button>
     </div>
 
@@ -394,20 +394,46 @@
             }
         }
 
-        async function saveProfile() {
-            const newRank = document.getElementById('edit-rank').value;
-            if (newRank === "SHADOW GUARD") { if(prompt("ENTER SHADOW KEY:") !== "admin123") return alert("ACCESS DENIED."); }
-            
-            const updateData = { rank: newRank };
-            if(tempProfileImgUrl) { updateData.pic = tempProfileImgUrl; }
-
-            const { error } = await supabaseClient.from('leaderboard').update(updateData).eq('username', currentUser.username);
-            if (error) { alert("UPDATE FAILED"); } else {
-                currentUser.rank = newRank; if(tempProfileImgUrl) currentUser.pic = tempProfileImgUrl;
-                localStorage.setItem('crowsaint_session', JSON.stringify(currentUser));
-                updateProfileUI(); closeAllModals(); alert("UPDATED.");
-            }
+       async function saveProfile() {
+    const newRank = document.getElementById('edit-rank').value;
+    
+    // 1. PROTEKSI TAHTA (KUNCI GANDA)
+    if (newRank === "ARCHIVE OWNER") {
+        const ownerKey = prompt("ENTER MASTER AUTHORITY KEY:");
+        if (ownerKey !== "owner777") { // Ganti ini jadi password rahasia lo
+            alert("ACCESS DENIED: YOU ARE NOT THE CHOSEN ONE.");
+            return;
         }
+    } else if (newRank === "SHADOW GUARD") {
+        const adminKey = prompt("ENTER SHADOW KEY:");
+        if (adminKey !== "admin123") {
+            alert("INVALID ADMIN KEY.");
+            return;
+        }
+    }
+
+    // 2. KIRIM UPDATE KE SUPABASE
+    const updateData = { rank: newRank };
+    if(tempProfileImgUrl) { updateData.pic = tempProfileImgUrl; }
+
+    const { error } = await supabaseClient
+        .from('leaderboard')
+        .update(updateData)
+        .eq('username', currentUser.username);
+
+    if (error) {
+        alert("UPDATE FAILED: " + error.message);
+    } else {
+        currentUser.rank = newRank;
+        if(tempProfileImgUrl) currentUser.pic = tempProfileImgUrl;
+        localStorage.setItem('crowsaint_session', JSON.stringify(currentUser));
+        
+        updateProfileUI(); 
+        closeAllModals(); 
+        alert("IDENTITY SECURED.");
+        location.reload(); 
+    }
+}
 
         
     function setCategory(cat) {
