@@ -585,34 +585,56 @@ window.addEventListener('DOMContentLoaded', () => {
             });
             alert(logString);
         }
-       // GANTI ISI FUNGSI LO PAKE INI, JANGAN ADA YANG TERSISA DARI KODE LAMA
-async function showLeaderboard() {
+         async function showLeaderboard() {
     closeAllModals();
     const modal = document.getElementById('leaderboard-modal');
     const content = document.getElementById('leaderboard-content');
-    
     content.innerHTML = `<div class="text-[8px] text-center py-10 animate-pulse text-zinc-500">DECRYPTING GLOBAL ARCHIVE...</div>`;
     modal.classList.add('active');
     document.getElementById('modal-overlay').classList.add('active');
 
     try {
-        const { data: users, error } = await supabaseClient
+        const { data: allUsers, error } = await supabaseClient
             .from('leaderboard')
             .select('*')
-            .order('points', { ascending: false })
-            .limit(10);
+            .order('points', { ascending: false });
 
         if (error) throw error;
 
-        // INI BAGIAN YANG TADI LO BINGUNGIN, SEKARANG SUDAH BERSIH:
-        let html = `<p class="text-[7px] text-zinc-500 mb-4 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
+        // 1. CARI DATA OWNER (Berdasarkan Rank di Supabase)
+        const ownerData = allUsers.find(u => u.rank === 'ARCHIVE OWNER');
+        const regularUsers = allUsers.filter(u => u.rank !== 'ARCHIVE OWNER').slice(0, 5);
+
+        let html = "";
+
+        // 2. BARISAN BARU KHUSUS OWNER (VIP SEAT)
+        if (ownerData) {
+            html += `
+            <p class="text-[7px] text-zinc-400 mb-2 uppercase tracking-[0.3em] font-bold">-- System Authority --</p>
+            <div class="flex items-center justify-between bg-white/10 p-3 border-2 border-white/20 mb-6 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                <div class="flex items-center gap-3">
+                    <img src="${ownerData.pic || 'logo.png'}" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-lg">
+                    <div>
+                        <p class="text-[11px] uppercase font-black text-white tracking-widest">${ownerData.username} [OWNER]</p>
+                        <p class="text-[7px] text-zinc-400 uppercase font-bold">The Void Guardian</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[11px] font-mono text-white">${ownerData.points || 0}</p>
+                    <p class="text-[6px] text-zinc-500 uppercase">MASTER PTS</p>
+                </div>
+            </div>`;
+        }
+
+        // 3. BARISAN GLOBAL VISITORS
+        html += `<p class="text-[7px] text-zinc-500 mb-3 uppercase tracking-[0.3em]">-- Global Visitors --</p>`;
         
-        users.forEach((u, i) => {
+        regularUsers.forEach((u, i) => {
             html += `
             <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
                 <div class="flex items-center gap-3">
-                    <span class="text-[10px] ${i < 3 ? 'text-white font-bold' : 'text-zinc-600'}">#${i + 1}</span>
-                    <img src="${u.pic || 'logo.png'}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover" onerror="this.src='logo.png'">
+                    <span class="text-[10px] text-zinc-600">#${i + 1}</span>
+                    <img src="${u.pic || 'logo.png'}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
                         <p class="text-[7px] text-zinc-500 uppercase">${u.rank || 'INITIATE'}</p>
@@ -620,10 +642,10 @@ async function showLeaderboard() {
                 </div>
                 <div class="text-right">
                     <p class="text-[10px] font-mono text-white">${u.points || 0}</p>
-                    <p class="text-[6px] text-zinc-600 uppercase">PTS</p>
                 </div>
             </div>`;
         });
+        
         content.innerHTML = html;
     } catch (e) {
         content.innerHTML = `<div class="text-red-500 text-[8px] text-center py-10 uppercase">ENCRYPTION ERROR</div>`;
