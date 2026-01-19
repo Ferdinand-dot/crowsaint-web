@@ -634,7 +634,9 @@ window.addEventListener('DOMContentLoaded', () => {
             <div class="flex items-center justify-between bg-zinc-900/50 p-2 border border-zinc-800 mb-2">
                 <div class="flex items-center gap-3">
                     <span class="text-[10px] text-zinc-600">#${i + 1}</span>
-                    <img src="${u.pic || 'logo.png'}" class="w-8 h-8 rounded-full border border-zinc-700 object-cover">
+                     <img src="${u.pic || 'logo.png'}" 
+                            class="w-8 h-8 rounded-full border border-zinc-700 object-cover" 
+                            onerror="this.src='logo.png'">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-white">${u.username}</p>
                         <p class="text-[7px] text-zinc-500 uppercase">${u.rank || 'INITIATE'}</p>
